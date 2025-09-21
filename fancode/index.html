@@ -112,7 +112,7 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   color:#aaa;
 }
 
-/* ✅ Green dot only */
+/* Green live dot */
 .stream-button .live-dot {
   width: 14px;
   height: 14px;
@@ -126,42 +126,6 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   100% { transform: scale(0.9); opacity: 0.7; }
 }
 
-#playerContainer{position:relative;max-width:800px;margin:20px auto;}
-#livePlayer{width:100%;border-radius:8px;background:#000;}
-#qualityBtn{
-  position:absolute;
-  bottom:10px;
-  right:10px;
-  background:rgba(0,0,0,0.6);
-  color:#fff;
-  padding:5px 10px;
-  border-radius:5px;
-  font-size:0.9em;
-  cursor:pointer;
-  display:none;
-  z-index:10;
-}
-#qualityMenu{
-  position:absolute;
-  bottom:45px;
-  right:10px;
-  background:rgba(0,0,0,0.85);
-  color:#fff;
-  border-radius:5px;
-  display:none;
-  flex-direction:column;
-  z-index:11;
-  overflow:hidden;
-}
-
-#qualityMenu div{
-  padding:8px 12px;
-  cursor:pointer;
-}
-#qualityMenu div:hover{
-  background:rgba(255,255,255,0.1);
-}
-
 footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color:#111;color:#fff;font-family:'Montserrat',sans-serif;margin-top:40px;}
 </style>
 </head>
@@ -170,26 +134,14 @@ footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color
 <h1>PhoenixxxTv Fancode Live</h1>
 <h2>Made with ♥️ by Lakshman</h2>
 
-<div id="playerContainer">
-  <video id="livePlayer" controls autoplay></video>
-  <div id="qualityBtn">Auto ▼</div>
-  <div id="qualityMenu"></div>
-</div>
-
 <div class="file-container" id="matches"></div>
 
 <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script>
 const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
-const refreshInterval = 180000;
 const container = document.getElementById('matches');
-const video = document.getElementById('livePlayer');
-const qualityBtn = document.getElementById('qualityBtn');
-const qualityMenu = document.getElementById('qualityMenu');
-let hls;
-let availableLevels = [];
+const playerBaseURL = 'https://fancodez.kajju3864.workers.dev/ios='; // Proxy URL to play streams
 
 function getStreamLink(match){
   if(match.dai_url) return match.dai_url;
@@ -202,67 +154,6 @@ function isWazLive(match){
   const t = (match.title || "").toLowerCase();
   return t.includes('ওয়াজ লাইভ') || t.includes('waz live');
 }
-
-function playStream(link){
-  if(Hls.isSupported()){
-    if(hls) hls.destroy();
-    hls = new Hls();
-    hls.loadSource(link);
-    hls.attachMedia(video);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, function(){
-      video.play();
-      availableLevels = hls.levels;
-      if(availableLevels.length > 1){
-        qualityBtn.style.display = 'block';
-        buildQualityMenu();
-      } else {
-        qualityBtn.style.display = 'none';
-      }
-    });
-  } else if(video.canPlayType('application/vnd.apple.mpegurl')){
-    video.src = link;
-    video.addEventListener('loadedmetadata', ()=> video.play());
-    qualityBtn.style.display = 'none';
-  } else {
-    alert('HLS not supported in this browser.');
-  }
-}
-
-function buildQualityMenu(){
-  qualityMenu.innerHTML = '';
-  const autoOption = document.createElement('div');
-  autoOption.textContent = 'Auto';
-  autoOption.onclick = ()=>{
-    hls.currentLevel = -1;
-    qualityBtn.textContent = 'Auto ▼';
-    qualityMenu.style.display='none';
-  };
-  qualityMenu.appendChild(autoOption);
-
-  availableLevels.forEach((level,index)=>{
-    const div = document.createElement('div');
-    div.textContent = level.height + 'p';
-    div.onclick = ()=>{
-      hls.currentLevel = index;
-      qualityBtn.textContent = level.height + 'p ▼';
-      qualityMenu.style.display='none';
-    };
-    qualityMenu.appendChild(div);
-  });
-}
-
-// Toggle menu
-qualityBtn.onclick = ()=> {
-  qualityMenu.style.display = qualityMenu.style.display==='flex'?'none':'flex';
-};
-
-// Click outside to close
-document.addEventListener('click', (e)=>{
-  if(!qualityBtn.contains(e.target) && !qualityMenu.contains(e.target)){
-    qualityMenu.style.display='none';
-  }
-});
 
 function parseMatchTime(timeStr){
   if(!timeStr) return null;
@@ -297,31 +188,10 @@ function renderMatches(data){
     return;
   }
 
-  const liveMatches = [];
-  const upcomingMatches = [];
-  const pastMatches = [];
-
-  data.matches.forEach(match=>{
-    const matchTime = parseMatchTime(match.startTime || match.start_date);
-    const now = new Date();
-    if(match.status && match.status.toLowerCase()==='live'){
-      liveMatches.push({...match, matchTime});
-    } else if(matchTime && matchTime > now){
-      upcomingMatches.push({...match, matchTime});
-    } else {
-      pastMatches.push({...match, matchTime});
-    }
-  });
-
-  liveMatches.sort((a,b)=>a.matchTime - b.matchTime);
-  upcomingMatches.sort((a,b)=>a.matchTime - b.matchTime);
-  pastMatches.sort((a,b)=>b.matchTime - a.matchTime);
-
-  const ordered = [...liveMatches, ...pastMatches, ...upcomingMatches];
-
-  ordered.forEach(match=>{
+  data.matches.forEach(match => {
     const div = document.createElement('div');
     div.className = 'match-item';
+
     const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
     const statusLive = match.status && match.status.toLowerCase() === 'live';
     const hasStream = !!getStreamLink(match);
@@ -336,7 +206,7 @@ function renderMatches(data){
           ${startTimeDisplay}
           <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
             ${statusLive && hasStream ? '<div class="live-dot"></div>' : ''} 
-            ${hasStream ? 'Watch' : 'No Stream'}
+            ${hasStream ? 'Watch Now' : 'No Stream'}
           </button>
         </div>
       </div>
@@ -344,12 +214,12 @@ function renderMatches(data){
 
     const btn = div.querySelector('.stream-button');
     if(hasStream){
-      btn.addEventListener('click', e=>{
+      btn.addEventListener('click', e => {
         e.stopPropagation();
         const link = getStreamLink(match);
         if(link){
-          playStream(link);
-          window.scrollTo({top: 0, behavior: 'smooth'});
+          // Open proxy URL in new tab
+          window.open(playerBaseURL + link, '_blank');
         }
       });
     }
@@ -370,7 +240,7 @@ async function fetchAndRender(){
 }
 
 fetchAndRender();
-setInterval(fetchAndRender, refreshInterval);
+setInterval(fetchAndRender, 180000);
 </script>
 
 </body>
