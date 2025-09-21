@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PhoenixxxTv Fancode Live</title>
+
+<!-- Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
+
+<!-- Plyr.io CSS -->
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+<style>
+:root {
+  --bg-color: #222; --text-color: #fff; --match-bg: #333;
+  --btn-primary-bg: #ff6600; --btn-primary-hover-bg: #cc5500; --btn-primary-text: #fff;
+  --status-live-color: #00ff00;
+  --title-color: #ff6600; --subtitle-color: #ffcc00;
+}
+
+body{
+  margin:0;
+  padding:20px;
+  font-family:'Roboto',sans-serif;
+  background-color:var(--bg-color);
+  color:var(--text-color);
+  box-sizing:border-box;
+}
+
+h1{text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;margin-bottom:5px;color:var(--title-color);}
+h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bottom:20px;color:var(--subtitle-color);}
+
+.file-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.match-item{
+  background-color:var(--match-bg);
+  border-radius:10px;
+  padding:15px;
+  width:calc(25% - 20px);
+  min-width:250px;
+  box-shadow:0 0 10px rgba(0,0,0,0.3);
+  cursor:pointer;
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  min-height:400px;
+}
+
+@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);}}
+@media(max-width:768px){.match-item{width:calc(50% - 20px);}}
+@media(max-width:480px){.match-item{width:100%;}}
+
+.match-item img{width:100%;height:auto;border-radius:8px;}
+
+.match-details{
+  margin-top:10px;
+  text-align:center;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex-grow:1;
+}
+
+.match-details h3{
+  margin:5px 0;
+  font-family:'Montserrat',sans-serif;
+  font-weight:700;
+  font-size:1.1em;
+  text-align:center;
+  word-wrap:break-word;
+}
+
+.match-time-button{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  gap:8px;
+  margin-top:auto;
+}
+
+.match-details p{
+  margin:0;
+  font-size:0.9em;
+  word-wrap:break-word;
+}
+
+.stream-button{
+  padding:12px 0;
+  background-color:var(--btn-primary-bg);
+  color:var(--btn-primary-text);
+  border:none;
+  border-radius:8px;
+  font-family:'Montserrat',sans-serif;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:50px;
+  gap:8px;
+  transition:background-color 0.3s;
+}
+.stream-button:hover:not(.disabled){background-color:var(--btn-primary-hover-bg);}
+.stream-button.disabled{
+  background-color:#555;
+  cursor:not-allowed;
+  color:#aaa;
+}
+
+/* ✅ Green dot only */
+.stream-button .live-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--status-live-color);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+/* Player container */
+#playerContainer{
+  position:relative;
+  max-width:800px;
+  margin:20px auto;
+}
+#livePlayer{
+  width:100%;
+  border-radius:8px;
+  background:#000;
+}
+
+footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color:#111;color:#fff;font-family:'Montserrat',sans-serif;margin-top:40px;}
+</style>
+</head>
+<body>
+
+<h1>PhoenixxxTv Fancode Live</h1>
+<h2>Made with ♥️ by Lakshman</h2>
+
+<div id="playerContainer">
+  <video id="livePlayer" controls></video>
+</div>
+
+<div class="file-container" id="matches"></div>
+
+<footer>©Lakshman 2025 | All Rights Reserved</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+<script>
+const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+const refreshInterval = 180000;
+const container = document.getElementById('matches');
+const video = document.getElementById('livePlayer');
+let hls;
+let player;
+let availableLevels = [];
+
+function getStreamLink(match){
+  if(match.dai_url) return match.dai_url;
+  if(match.url) return match.url;
+  if(match.stream && match.stream.url) return match.stream.url;
+  return null;
+}
+
+function playStream(link){
+  if(hls){ hls.destroy(); hls = null; }
+
+  if(Hls.isSupported()){
+    hls = new Hls();
+    hls.loadSource(link);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(event, data){
+      availableLevels = hls.levels;
+      video.play();
+      if(!player){
+        player = new Plyr(video, { 
+          controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
+        });
+      }
+    });
+  } else if(video.canPlayType('application/vnd.apple.mpegurl')){
+    video.src = link;
+    video.addEventListener('loadedmetadata', ()=> video.play());
+    if(!player){
+      player = new Plyr(video, { 
+        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
+      });
+    }
+  } else {
+    alert('HLS not supported in this browser.');
+  }
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderMatches(data){
+  container.innerHTML = '';
+  if(!data.matches || !data.matches.length){
+    container.textContent = "No matches available right now.";
+    return;
+  }
+
+  data.matches.forEach(match=>{
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
+    const statusLive = match.status && match.status.toLowerCase() === 'live';
+    const hasStream = !!getStreamLink(match);
+
+    div.innerHTML = `
+      <img src="${imgUrl}" alt="${match.title || 'Match Image'}">
+      <div class="match-details">
+        <h3>${match.title || 'Match Title'}</h3>
+        <div class="match-time-button">
+          <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
+            ${statusLive && hasStream ? '<div class="live-dot"></div>' : ''} 
+            ${hasStream ? 'Watch' : 'No Stream'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    const btn = div.querySelector('.stream-button');
+    if(hasStream){
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        playStream(getStreamLink(match));
+      });
+    }
+
+    container.appendChild(div);
+  });
+}
+
+async function fetchAndRender(){
+  try{
+    const resp = await fetch(apiURL, {cache:'no-cache'});
+    const data = await resp.json();
+    renderMatches(data);
+  }catch(err){
+    console.error(err);
+    container.textContent = "Failed to fetch live matches.";
+  }
+}
+
+fetchAndRender();
+setInterval(fetchAndRender, refreshInterval);
+</script>
+
+</body>
+</html>
