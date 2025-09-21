@@ -4,13 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PhoenixxxTv Fancode Live</title>
-
-<!-- Fonts -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
-
-<!-- Plyr.io CSS -->
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-
 <style>
 :root {
   --bg-color: #222; --text-color: #fff; --match-bg: #333;
@@ -88,12 +82,6 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   margin-top:auto;
 }
 
-.match-details p{
-  margin:0;
-  font-size:0.9em;
-  word-wrap:break-word;
-}
-
 .stream-button{
   padding:12px 0;
   background-color:var(--btn-primary-bg);
@@ -118,7 +106,6 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   color:#aaa;
 }
 
-/* ✅ Green dot only */
 .stream-button .live-dot {
   width: 14px;
   height: 14px;
@@ -132,19 +119,28 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   100% { transform: scale(0.9); opacity: 0.7; }
 }
 
-/* Player container */
 #playerContainer{
   position:relative;
   max-width:800px;
   margin:20px auto;
 }
-#livePlayer{
+
+#playerContainer iframe{
   width:100%;
+  height:450px;
+  border:none;
   border-radius:8px;
-  background:#000;
 }
 
-footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color:#111;color:#fff;font-family:'Montserrat',sans-serif;margin-top:40px;}
+footer{
+  width:100%;
+  text-align:center;
+  padding:20px 10px 24px 10px;
+  background-color:#111;
+  color:#fff;
+  font-family:'Montserrat',sans-serif;
+  margin-top:40px;
+}
 </style>
 </head>
 <body>
@@ -153,66 +149,26 @@ footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color
 <h2>Made with ♥️ by Lakshman</h2>
 
 <div id="playerContainer">
-  <video id="livePlayer" controls></video>
+  <!-- Embed player will appear here -->
 </div>
 
 <div class="file-container" id="matches"></div>
 
 <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-
 <script>
 const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
-const refreshInterval = 180000;
 const container = document.getElementById('matches');
-const video = document.getElementById('livePlayer');
-let hls;
-let player;
-let availableLevels = [];
+const playerContainer = document.getElementById('playerContainer');
 
-function getStreamLink(match){
-  if(match.dai_url) return match.dai_url;
-  if(match.url) return match.url;
-  if(match.stream && match.stream.url) return match.stream.url;
+function getStreamEmbed(match){
+  // Embed widget URL (Fancode official embed)
+  if(match.embed_url) return match.embed_url;
   return null;
 }
 
-function playStream(link){
-  if(hls){ hls.destroy(); hls = null; }
-
-  if(Hls.isSupported()){
-    hls = new Hls();
-    hls.loadSource(link);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(event, data){
-      availableLevels = hls.levels;
-      video.play();
-      if(!player){
-        player = new Plyr(video, { 
-          controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
-        });
-      }
-    });
-  } else if(video.canPlayType('application/vnd.apple.mpegurl')){
-    video.src = link;
-    video.addEventListener('loadedmetadata', ()=> video.play());
-    if(!player){
-      player = new Plyr(video, { 
-        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] 
-      });
-    }
-  } else {
-    alert('HLS not supported in this browser.');
-  }
-
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
 function renderMatches(data){
-  container.innerHTML = '';
+  container.innerHTML='';
   if(!data.matches || !data.matches.length){
     container.textContent = "No matches available right now.";
     return;
@@ -223,7 +179,7 @@ function renderMatches(data){
     div.className = 'match-item';
     const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
     const statusLive = match.status && match.status.toLowerCase() === 'live';
-    const hasStream = !!getStreamLink(match);
+    const hasStream = !!getStreamEmbed(match);
 
     div.innerHTML = `
       <img src="${imgUrl}" alt="${match.title || 'Match Image'}">
@@ -240,9 +196,10 @@ function renderMatches(data){
 
     const btn = div.querySelector('.stream-button');
     if(hasStream){
-      btn.addEventListener('click', e=>{
-        e.stopPropagation();
-        playStream(getStreamLink(match));
+      btn.addEventListener('click', ()=>{
+        const embedUrl = getStreamEmbed(match);
+        playerContainer.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+        window.scrollTo({top:0,behavior:'smooth'});
       });
     }
 
@@ -262,7 +219,7 @@ async function fetchAndRender(){
 }
 
 fetchAndRender();
-setInterval(fetchAndRender, refreshInterval);
+setInterval(fetchAndRender, 180000); // refresh every 3 mins
 </script>
 
 </body>
