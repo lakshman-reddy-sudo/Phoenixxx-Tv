@@ -1,162 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FanCode Live</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap">
-<style>
-:root {
-  --bg-color: #222;
-  --text-color: #fff;
-  --card-bg: #333;
-  --btn-bg: #ff6600;
-  --btn-hover: #cc5500;
-  --btn-disabled: #555;
-}
-body {
-  margin:0; padding:20px;
-  font-family:'Roboto',sans-serif;
-  background:var(--bg-color);
-  color:var(--text-color);
-}
-h1 {text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;color:var(--btn-bg);}
-h2 {text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;color:#ffcc00;margin-bottom:20px;}
-.container {display:flex;flex-wrap:wrap;gap:15px;justify-content:center;}
-.match-item {background:var(--card-bg);border-radius:10px;padding:10px;width:calc(25% - 20px);min-width:250px;box-shadow:0 0 10px rgba(0,0,0,0.3);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;cursor:pointer;}
-.match-item img {width:100%;border-radius:8px;}
-.match-details {width:100%;display:flex;flex-direction:column;align-items:center;flex-grow:1;margin-top:5px;}
-.match-details h3 {margin:5px 0;font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.1em;text-align:center;}
-.match-time-button {display:flex;flex-direction:column;width:100%;gap:5px;margin-top:auto;}
-.stream-button {padding:12px 0;background-color:var(--btn-bg);color:#fff;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;width:100%;gap:8px;transition:background-color 0.3s;}
-.stream-button:hover:not(.disabled){background-color:var(--btn-hover);}
-.stream-button.disabled{background-color:var(--btn-disabled);cursor:not-allowed;color:#aaa;}
-#playerContainer {position:fixed;top:0;left:0;width:100%;height:100%;background:black;display:none;flex-direction:column;justify-content:center;align-items:center;z-index:1000;}
-#livePlayer {width:90%;max-height:80%;border-radius:8px;background:#000;}
-#qualityBtn {margin-top:10px;padding:6px 12px;background:#222;color:#fff;border-radius:5px;cursor:pointer;font-size:0.9em;display:none;}
-#qualityMenu {display:none;flex-direction:column;background:#333;border-radius:5px;margin-top:5px;overflow:hidden;}
-#qualityMenu div {padding:8px;cursor:pointer;}
-#qualityMenu div:hover{background:#555;}
-#closeBtn {margin-top:10px;padding:8px 20px;background:#333;color:#fff;border:none;border-radius:5px;cursor:pointer;}
-footer {text-align:center;padding:20px;background:#111;margin-top:20px;color:#aaa;}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PhoenixxxTv Live – SonyLiv & Fancode</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
+  <style>
+    :root{
+      --bg-color:#222; --text-color:#fff; --card-bg:#333;
+      --accent:#ff6600; --accent-dark:#cc5500;
+    }
+    body{
+      margin:0; padding:20px; font-family:'Roboto',sans-serif;
+      background:var(--bg-color); color:var(--text-color); box-sizing:border-box;
+    }
+    h1{font-family:'Montserrat',sans-serif; text-align:center; color:var(--accent); margin:0 0 6px 0;}
+    h2{font-family:'Montserrat',sans-serif; text-align:center; color:#ffcc00; margin:0 0 18px 0;}
+    #playerContainer{position:relative; max-width:960px; margin:18px auto; padding:8px; border-radius:8px;}
+    #livePlayer{width:100%; border-radius:8px; background:#000; display:block;}
+    #qualityBtn{
+      position:absolute; bottom:12px; right:12px;
+      background:rgba(0,0,0,0.6); color:#fff; padding:6px 10px; border-radius:6px;
+      font-family:'Montserrat',sans-serif; font-weight:700; cursor:pointer; display:none; z-index:10;
+    }
+    #qualityMenu{
+      position:absolute; bottom:48px; right:12px; display:none; flex-direction:column;
+      background:rgba(0,0,0,0.85); border-radius:6px; overflow:hidden; z-index:11;
+    }
+    #qualityMenu div{ padding:8px 12px; cursor:pointer; white-space:nowrap; }
+    #qualityMenu div:hover{ background:rgba(255,255,255,0.06); }
+
+    .file-container{ display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-top:20px; }
+    .match-item{ background:var(--card-bg); border-radius:10px; padding:12px; width:calc(25% - 20px); min-width:230px;
+      box-shadow:0 0 10px rgba(0,0,0,0.3); transition:transform .2s ease; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    }
+    .match-item img{ width:100%; height:auto; border-radius:6px; display:block; }
+    .match-details{ width:100%; text-align:center; margin-top:10px; display:flex; flex-direction:column; align-items:center; flex-grow:0; justify-content:flex-start; }
+    .match-details h3{ margin:4px 0 6px 0; font-family:'Montserrat',sans-serif; font-size:1.05em; font-weight:700; word-wrap:break-word; }
+    .match-source{ font-size:0.75em; color:#ffcc00; margin-bottom:4px; }
+    .match-time-button{ width:100%; display:flex; flex-direction:column; gap:6px; margin-top:0; }
+    .stream-button{ width:100%; padding:12px 10px; border-radius:8px; background:var(--accent); color:#fff; border:0; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .stream-button.disabled{ background:#555; color:#bbb; cursor:not-allowed; }
+    .live-dot{ width:12px; height:12px; border-radius:50%; animation:pulse 1.4s infinite; }
+    .live-dot-green{ background:#00ff00; }
+    .live-dot-red{ background:#ff4d4d; }
+    @keyframes pulse{ 0%{ transform:scale(1); opacity:1;} 50%{ transform:scale(1.3); opacity:0.6;} 100%{ transform:scale(1); opacity:1;} }
+
+    @media(max-width:1024px){ .match-item{ width:calc(33.333% - 20px);} }
+    @media(max-width:768px){ .match-item{ width:calc(50% - 20px);} }
+    @media(max-width:480px){ .match-item{ width:100%; } #playerContainer{ padding:6px; } }
+
+    footer{ text-align:center; color:#fff; padding:20px 10px; font-family:'Montserrat',sans-serif; margin-top:30px; background:#111; }
+  </style>
 </head>
 <body>
+  <h1>PhoenixxxTv Live</h1>
+  <h2>SonyLiv & Fancode | Made with ♥️ by Lakshman</h2>
 
-<h1>FanCode Live</h1>
-<h2>Made with ♥️ by Lakshman</h2>
+  <div id="playerContainer">
+    <video id="livePlayer" controls playsinline></video>
+    <div id="qualityBtn">Quality ▼</div>
+    <div id="qualityMenu"></div>
+  </div>
 
-<div class="container" id="matches"></div>
+  <div class="file-container" id="matches"></div>
 
-<div id="playerContainer">
-  <video id="livePlayer" controls></video>
-  <div id="qualityBtn">Quality ▼</div>
-  <div id="qualityMenu"></div>
-  <button id="closeBtn">Close</button>
-</div>
+  <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
-<footer>© 2025 PhoenixxxTv | All Rights Reserved</footer>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script>
+    const apiURLs = [
+      'https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json',
+      'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json'
+    ];
+    const refreshInterval = 180000;
+    const container = document.getElementById('matches');
+    const video = document.getElementById('livePlayer');
+    const qualityBtn = document.getElementById('qualityBtn');
+    const qualityMenu = document.getElementById('qualityMenu');
+    const playerContainer = document.getElementById('playerContainer');
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script>
-const matchesContainer = document.getElementById('matches');
-const playerContainer = document.getElementById('playerContainer');
-const video = document.getElementById('livePlayer');
-const closeBtn = document.getElementById('closeBtn');
-const qualityBtn = document.getElementById('qualityBtn');
-const qualityMenu = document.getElementById('qualityMenu');
-let hls;
-let availableLevels = [];
+    let hls = null;
+    let availableLevels = [];
+    let currentPlayingDiv = null;
 
-// Example JSON with only playable streams (replace with your source)
-const jsonURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
-const refreshInterval = 180000;
-
-async function fetchMatches() {
-  try {
-    const res = await fetch(jsonURL, {cache:'no-cache'});
-    const data = await res.json();
-    renderMatches(data.matches || []);
-  } catch(err) {
-    console.error(err);
-    matchesContainer.textContent = 'Failed to fetch matches';
-  }
-}
-
-function renderMatches(matches) {
-  matchesContainer.innerHTML = '';
-  if(matches.length===0){matchesContainer.textContent='No matches available.'; return;}
-  matches.forEach(match=>{
-    const div = document.createElement('div');
-    div.className = 'match-item';
-    const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
-    const hasStream = !!(match.url || match.dai_url || (match.stream && match.stream.url));
-    div.innerHTML = `
-      <img src="${imgUrl}" alt="${match.title || 'Match'}">
-      <div class="match-details">
-        <h3>${match.title || 'Match Title'}</h3>
-        <div class="match-time-button">
-          <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
-            ${hasStream?'Watch':'No Stream'}
-          </button>
-        </div>
-      </div>
-    `;
-    const btn = div.querySelector('button');
-    if(hasStream){
-      btn.addEventListener('click', ()=>playStream(getStreamLink(match)));
+    function getStreamLink(match){
+      return match.dai_url || match.pub_url || match.video_url || match.url || (match.stream && match.stream.url) || null;
     }
-    matchesContainer.appendChild(div);
-  });
-}
 
-function getStreamLink(match){
-  return match.dai_url || match.url || (match.stream && match.stream.url) || null;
-}
+    function parseStartTime(str){
+      if(!str) return 0;
+      try { return new Date(str).getTime(); } catch(e){ return 0; }
+    }
 
-function playStream(link){
-  if(!link) return alert('Stream not available');
-  playerContainer.style.display='flex';
-  if(hls){hls.destroy();}
-  if(Hls.isSupported()){
-    hls = new Hls();
-    hls.loadSource(link);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function(event, data){
-      availableLevels = data.levels || [];
-      if(availableLevels.length>1){qualityBtn.style.display='block'; buildQualityMenu();}
-      else qualityBtn.style.display='none';
-      video.play();
-    });
-  } else if(video.canPlayType('application/vnd.apple.mpegurl')){
-    video.src = link;
-    video.addEventListener('loadedmetadata', ()=> video.play());
-    qualityBtn.style.display='none';
-  } else {
-    alert('HLS not supported in this browser.');
-  }
-}
+    function scrollToPlayer(){
+      const offset = 12;
+      const top = playerContainer.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
 
-function buildQualityMenu(){
-  qualityMenu.innerHTML='';
-  const autoOption = document.createElement('div');
-  autoOption.textContent='Quality';
-  autoOption.onclick = ()=>{hls.currentLevel=-1; qualityBtn.textContent='Quality ▼'; qualityMenu.style.display='none';};
-  qualityMenu.appendChild(autoOption);
-  availableLevels.forEach((lvl, i)=>{
-    const div = document.createElement('div');
-    div.textContent = lvl.height+'p';
-    div.onclick = ()=>{hls.currentLevel=i; qualityBtn.textContent=lvl.height+'p ▼'; qualityMenu.style.display='none';};
-    qualityMenu.appendChild(div);
-  });
-}
+    function playStream(link, div){
+      if(!link){ alert('No playable stream link.'); return; }
+      if(hls){ try{ hls.destroy(); }catch(e){} hls=null; availableLevels=[]; }
+      if(Hls.isSupported() && link.indexOf('.m3u8')!==-1){
+        hls = new Hls();
+        hls.loadSource(link);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, ()=> {
+          availableLevels = hls.levels||[];
+          if(availableLevels.length>1){ qualityBtn.style.display='block'; buildQualityMenu(); } 
+          else { qualityBtn.style.display='none'; }
+          video.play().catch(()=>{});
+        });
+      }else{
+        video.src = link;
+        video.play().catch(()=>{});
+        qualityBtn.style.display='none';
+      }
+      if(currentPlayingDiv) currentPlayingDiv.classList.remove('playing');
+      currentPlayingDiv = div; currentPlayingDiv && currentPlayingDiv.classList.add('playing');
+      scrollToPlayer();
+    }
 
-qualityBtn.onclick = ()=>{qualityMenu.style.display = qualityMenu.style.display==='flex'?'none':'flex';};
-closeBtn.onclick = ()=>{playerContainer.style.display='none'; if(hls) hls.destroy();};
+    function buildQualityMenu(){
+      qualityMenu.innerHTML='';
+      const autoOption = document.createElement('div');
+      autoOption.textContent='Auto';
+      autoOption.onclick=()=>{ if(hls) hls.currentLevel=-1; qualityBtn.textContent='Quality ▼'; qualityMenu.style.display='none'; };
+      qualityMenu.appendChild(autoOption);
+      availableLevels.forEach((level,index)=>{
+        const div=document.createElement('div');
+        div.textContent=(level && level.height)?(level.height+'p'):'Level '+index;
+        div.onclick=()=>{ if(hls) hls.currentLevel=index; qualityBtn.textContent=(level && level.height)?(level.height+'p ▼'):'Level '+index+' ▼'; qualityMenu.style.display='none'; };
+        qualityMenu.appendChild(div);
+      });
+    }
 
-fetchMatches();
-setInterval(fetchMatches, refreshInterval);
-</script>
+    qualityBtn.onclick=()=>{ qualityMenu.style.display=(qualityMenu.style.display==='flex')?'none':'flex'; };
+    document.addEventListener('click', e=>{ if(!qualityBtn.contains(e.target)&&!qualityMenu.contains(e.target)) qualityMenu.style.display='none'; });
 
+    function renderMatches(matchesArray){
+      container.innerHTML='';
+      if(!Array.isArray(matchesArray) || matchesArray.length===0){ container.textContent='No matches available.'; return; }
+      matchesArray.sort((a,b)=>{
+        const statusA=((a.status||a.isLive)||'').toString().toLowerCase();
+        const statusB=((b.status||b.isLive)||'').toString().toLowerCase();
+        const timeA=parseStartTime(a.startTime||a.start_date||a.start_time||a.start);
+        const timeB=parseStartTime(b.startTime||b.start_date||b.start_time||b.start);
+        if(statusA==='live' && statusB==='live') return timeA-timeB;
+        if(statusA==='live') return -1;
+        if(statusB==='live') return 1;
+        return timeA-timeB;
+      });
+
+      matchesArray.forEach(match=>{
+        const div=document.createElement('div');
+        div.className='match-item';
+        const imgUrl=match.image||match.src||match.thumbnail||match.img||'https://via.placeholder.com/300x200?text=No+Image';
+        const title=match.match_name||match.title||match.name||match.event||'Match Title';
+        const statusLive=(match.status && match.status.toString().toLowerCase()==='live')||(match.isLive===true)||false;
+        const dotClass=statusLive?'live-dot-green':'live-dot-red';
+        const streamLink=getStreamLink(match);
+        const hasStream=!!streamLink;
+        const sourceLabel=match.source || 'Unknown';
+
+        div.innerHTML=`
+          <img src="${imgUrl}" alt="${title}">
+          <div class="match-details">
+            <div class="match-source">${sourceLabel}</div>
+            <h3>${title}</h3>
+            <div class="match-time-button">
+              <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
+                ${statusLive&&hasStream?'<span class="live-dot '+dotClass+'"></span>':''}
+                ${hasStream?'Watch':'No Stream'}
+              </button>
+            </div>
+          </div>
+        `;
+        if(hasStream){ div.querySelector('.stream-button').addEventListener('click',e=>{ e.stopPropagation(); playStream(streamLink,div); }); }
+        container.appendChild(div);
+      });
+    }
+
+    async function fetchAndRender(){
+      try{
+        const allMatches=[];
+        for(const url of apiURLs){
+          const resp=await fetch(url,{cache:'no-cache'});
+          const data=await resp.json();
+          let matchesArray=[];
+          if(Array.isArray(data)) matchesArray=data;
+          else if(Array.isArray(data.matches)) matchesArray=data.matches;
+          else if(Array.isArray(data.data)) matchesArray=data.data;
+          else if(Array.isArray(data.events)) matchesArray=data.events;
+          else { for(const k in data){ if(Array.isArray(data[k])){ matchesArray=data[k]; break; } } }
+          matchesArray.forEach(m=>m.source=url.includes('fancode')?'Fancode':'SonyLiv');
+          allMatches.push(...matchesArray);
+        }
+        renderMatches(allMatches);
+      }catch(err){ console.error(err); container.textContent='Failed to fetch live matches.'; }
+    }
+
+    fetchAndRender();
+    setInterval(fetchAndRender,refreshInterval);
+  </script>
 </body>
 </html>
