@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FanCode Live</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap">
+<style>
+:root {
+  --bg-color: #222;
+  --text-color: #fff;
+  --card-bg: #333;
+  --btn-bg: #ff6600;
+  --btn-hover: #cc5500;
+  --btn-disabled: #555;
+}
+body {
+  margin:0; padding:20px;
+  font-family:'Roboto',sans-serif;
+  background:var(--bg-color);
+  color:var(--text-color);
+}
+h1 {text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;color:var(--btn-bg);}
+h2 {text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;color:#ffcc00;margin-bottom:20px;}
+.container {display:flex;flex-wrap:wrap;gap:15px;justify-content:center;}
+.match-item {background:var(--card-bg);border-radius:10px;padding:10px;width:calc(25% - 20px);min-width:250px;box-shadow:0 0 10px rgba(0,0,0,0.3);display:flex;flex-direction:column;justify-content:flex-start;align-items:center;cursor:pointer;}
+.match-item img {width:100%;border-radius:8px;}
+.match-details {width:100%;display:flex;flex-direction:column;align-items:center;flex-grow:1;margin-top:5px;}
+.match-details h3 {margin:5px 0;font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.1em;text-align:center;}
+.match-time-button {display:flex;flex-direction:column;width:100%;gap:5px;margin-top:auto;}
+.stream-button {padding:12px 0;background-color:var(--btn-bg);color:#fff;border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:700;cursor:pointer;display:flex;justify-content:center;align-items:center;width:100%;gap:8px;transition:background-color 0.3s;}
+.stream-button:hover:not(.disabled){background-color:var(--btn-hover);}
+.stream-button.disabled{background-color:var(--btn-disabled);cursor:not-allowed;color:#aaa;}
+#playerContainer {position:fixed;top:0;left:0;width:100%;height:100%;background:black;display:none;flex-direction:column;justify-content:center;align-items:center;z-index:1000;}
+#livePlayer {width:90%;max-height:80%;border-radius:8px;background:#000;}
+#qualityBtn {margin-top:10px;padding:6px 12px;background:#222;color:#fff;border-radius:5px;cursor:pointer;font-size:0.9em;display:none;}
+#qualityMenu {display:none;flex-direction:column;background:#333;border-radius:5px;margin-top:5px;overflow:hidden;}
+#qualityMenu div {padding:8px;cursor:pointer;}
+#qualityMenu div:hover{background:#555;}
+#closeBtn {margin-top:10px;padding:8px 20px;background:#333;color:#fff;border:none;border-radius:5px;cursor:pointer;}
+footer {text-align:center;padding:20px;background:#111;margin-top:20px;color:#aaa;}
+</style>
+</head>
+<body>
+
+<h1>FanCode Live</h1>
+<h2>Made with ♥️ by Lakshman</h2>
+
+<div class="container" id="matches"></div>
+
+<div id="playerContainer">
+  <video id="livePlayer" controls></video>
+  <div id="qualityBtn">Quality ▼</div>
+  <div id="qualityMenu"></div>
+  <button id="closeBtn">Close</button>
+</div>
+
+<footer>© 2025 PhoenixxxTv | All Rights Reserved</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+const matchesContainer = document.getElementById('matches');
+const playerContainer = document.getElementById('playerContainer');
+const video = document.getElementById('livePlayer');
+const closeBtn = document.getElementById('closeBtn');
+const qualityBtn = document.getElementById('qualityBtn');
+const qualityMenu = document.getElementById('qualityMenu');
+let hls;
+let availableLevels = [];
+
+// Example JSON with only playable streams (replace with your source)
+const jsonURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+const refreshInterval = 180000;
+
+async function fetchMatches() {
+  try {
+    const res = await fetch(jsonURL, {cache:'no-cache'});
+    const data = await res.json();
+    renderMatches(data.matches || []);
+  } catch(err) {
+    console.error(err);
+    matchesContainer.textContent = 'Failed to fetch matches';
+  }
+}
+
+function renderMatches(matches) {
+  matchesContainer.innerHTML = '';
+  if(matches.length===0){matchesContainer.textContent='No matches available.'; return;}
+  matches.forEach(match=>{
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
+    const hasStream = !!(match.url || match.dai_url || (match.stream && match.stream.url));
+    div.innerHTML = `
+      <img src="${imgUrl}" alt="${match.title || 'Match'}">
+      <div class="match-details">
+        <h3>${match.title || 'Match Title'}</h3>
+        <div class="match-time-button">
+          <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
+            ${hasStream?'Watch':'No Stream'}
+          </button>
+        </div>
+      </div>
+    `;
+    const btn = div.querySelector('button');
+    if(hasStream){
+      btn.addEventListener('click', ()=>playStream(getStreamLink(match)));
+    }
+    matchesContainer.appendChild(div);
+  });
+}
+
+function getStreamLink(match){
+  return match.dai_url || match.url || (match.stream && match.stream.url) || null;
+}
+
+function playStream(link){
+  if(!link) return alert('Stream not available');
+  playerContainer.style.display='flex';
+  if(hls){hls.destroy();}
+  if(Hls.isSupported()){
+    hls = new Hls();
+    hls.loadSource(link);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function(event, data){
+      availableLevels = data.levels || [];
+      if(availableLevels.length>1){qualityBtn.style.display='block'; buildQualityMenu();}
+      else qualityBtn.style.display='none';
+      video.play();
+    });
+  } else if(video.canPlayType('application/vnd.apple.mpegurl')){
+    video.src = link;
+    video.addEventListener('loadedmetadata', ()=> video.play());
+    qualityBtn.style.display='none';
+  } else {
+    alert('HLS not supported in this browser.');
+  }
+}
+
+function buildQualityMenu(){
+  qualityMenu.innerHTML='';
+  const autoOption = document.createElement('div');
+  autoOption.textContent='Quality';
+  autoOption.onclick = ()=>{hls.currentLevel=-1; qualityBtn.textContent='Quality ▼'; qualityMenu.style.display='none';};
+  qualityMenu.appendChild(autoOption);
+  availableLevels.forEach((lvl, i)=>{
+    const div = document.createElement('div');
+    div.textContent = lvl.height+'p';
+    div.onclick = ()=>{hls.currentLevel=i; qualityBtn.textContent=lvl.height+'p ▼'; qualityMenu.style.display='none';};
+    qualityMenu.appendChild(div);
+  });
+}
+
+qualityBtn.onclick = ()=>{qualityMenu.style.display = qualityMenu.style.display==='flex'?'none':'flex';};
+closeBtn.onclick = ()=>{playerContainer.style.display='none'; if(hls) hls.destroy();};
+
+fetchMatches();
+setInterval(fetchMatches, refreshInterval);
+</script>
+
+</body>
+</html>
