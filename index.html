@@ -5,12 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PhoenixxxTv</title>
   <style>
-    body {
-      background-color: #121212;
-      color: #fff;
-      font-family: Arial, sans-serif;
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* ensures footer at bottom */
       text-align: center;
     }
 
@@ -41,23 +48,29 @@
     }
 
     footer {
-      margin-top: 50px;
       padding: 20px;
       font-size: 0.9em;
       color: #aaa;
+      background-color: #111;
+    }
+
+    main {
+      flex: 1; /* takes the remaining space */
     }
   </style>
 </head>
 <body>
 
-  <h1>Welcome to PhoenixxxTv</h1>
+  <main>
+    <h1>Welcome to PhoenixxxTv</h1>
 
-  <nav>
-    <a href="/fanCode/">FanCode Live</a>
-    <a href="/sonyliv/">SonyLiv Live</a>
-  </nav>
+    <nav>
+      <a href="/fanCode/">FanCode Live</a>
+      <a href="/sonyliv/">SonyLiv Live</a>
+    </nav>
 
-  <p>Enjoy live sports streaming from FanCode and SonyLiv!</p>
+    <p>Enjoy live sports streaming from FanCode and SonyLiv!</p>
+  </main>
 
   <footer>
     © 2025 PhoenixxxTv | All Rights Reserved
