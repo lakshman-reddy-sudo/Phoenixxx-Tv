@@ -10,30 +10,17 @@
       --bg-color:#222; --text-color:#fff; --card-bg:#333;
       --accent:#ff6600; --accent-dark:#cc5500;
     }
-    body{
-      margin:0; padding:20px; font-family:'Roboto',sans-serif;
-      background:var(--bg-color); color:var(--text-color); box-sizing:border-box;
-    }
+    body{ margin:0; padding:20px; font-family:'Roboto',sans-serif; background:var(--bg-color); color:var(--text-color); box-sizing:border-box; }
     h1{font-family:'Montserrat',sans-serif; text-align:center; color:var(--accent); margin:0 0 6px 0;}
     h2{font-family:'Montserrat',sans-serif; text-align:center; color:#ffcc00; margin:0 0 18px 0;}
     #playerContainer{position:relative; max-width:960px; margin:18px auto; padding:8px; border-radius:8px;}
     #livePlayer{width:100%; border-radius:8px; background:#000; display:block;}
-    #qualityBtn{
-      position:absolute; bottom:12px; right:12px;
-      background:rgba(0,0,0,0.6); color:#fff; padding:6px 10px; border-radius:6px;
-      font-family:'Montserrat',sans-serif; font-weight:700; cursor:pointer; display:none; z-index:10;
-    }
-    #qualityMenu{
-      position:absolute; bottom:48px; right:12px; display:none; flex-direction:column;
-      background:rgba(0,0,0,0.85); border-radius:6px; overflow:hidden; z-index:11;
-    }
+    #qualityBtn{ position:absolute; bottom:12px; right:12px; background:rgba(0,0,0,0.6); color:#fff; padding:6px 10px; border-radius:6px; font-family:'Montserrat',sans-serif; font-weight:700; cursor:pointer; display:none; z-index:10; }
+    #qualityMenu{ position:absolute; bottom:48px; right:12px; display:none; flex-direction:column; background:rgba(0,0,0,0.85); border-radius:6px; overflow:hidden; z-index:11; }
     #qualityMenu div{ padding:8px 12px; cursor:pointer; white-space:nowrap; }
     #qualityMenu div:hover{ background:rgba(255,255,255,0.06); }
-
     .file-container{ display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-top:20px; }
-    .match-item{ background:var(--card-bg); border-radius:10px; padding:12px; width:calc(25% - 20px); min-width:230px;
-      box-shadow:0 0 10px rgba(0,0,0,0.3); transition:transform .2s ease; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    }
+    .match-item{ background:var(--card-bg); border-radius:10px; padding:12px; width:calc(25% - 20px); min-width:230px; box-shadow:0 0 10px rgba(0,0,0,0.3); transition:transform .2s ease; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; }
     .match-item img{ width:100%; height:auto; border-radius:6px; display:block; }
     .match-details{ width:100%; text-align:center; margin-top:10px; display:flex; flex-direction:column; align-items:center; flex-grow:0; justify-content:flex-start; }
     .match-details h3{ margin:4px 0 6px 0; font-family:'Montserrat',sans-serif; font-size:1.05em; font-weight:700; word-wrap:break-word; }
@@ -45,11 +32,9 @@
     .live-dot-green{ background:#00ff00; }
     .live-dot-red{ background:#ff4d4d; }
     @keyframes pulse{ 0%{ transform:scale(1); opacity:1;} 50%{ transform:scale(1.3); opacity:0.6;} 100%{ transform:scale(1); opacity:1;} }
-
     @media(max-width:1024px){ .match-item{ width:calc(33.333% - 20px);} }
     @media(max-width:768px){ .match-item{ width:calc(50% - 20px);} }
     @media(max-width:480px){ .match-item{ width:100%; } #playerContainer{ padding:6px; } }
-
     footer{ text-align:center; color:#fff; padding:20px 10px; font-family:'Montserrat',sans-serif; margin-top:30px; background:#111; }
   </style>
 </head>
@@ -73,6 +58,7 @@
       'https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json',
       'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json'
     ];
+    const proxy = 'https://api.allorigins.win/raw?url=';
     const refreshInterval = 180000;
     const container = document.getElementById('matches');
     const video = document.getElementById('livePlayer');
@@ -88,19 +74,11 @@
       return match.dai_url || match.pub_url || match.video_url || match.url || (match.stream && match.stream.url) || null;
     }
 
-    function parseStartTime(str){
-      if(!str) return 0;
-      try { return new Date(str).getTime(); } catch(e){ return 0; }
-    }
-
-    function scrollToPlayer(){
-      const offset = 12;
-      const top = playerContainer.getBoundingClientRect().top + window.scrollY - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+    function parseStartTime(str){ if(!str) return 0; try{ return new Date(str).getTime(); }catch(e){return 0;} }
+    function scrollToPlayer(){ window.scrollTo({ top: playerContainer.getBoundingClientRect().top + window.scrollY - 12, behavior: 'smooth' }); }
 
     function playStream(link, div){
-      if(!link){ alert('No playable stream link.'); return; }
+      if(!link){ alert('No playable stream.'); return; }
       if(hls){ try{ hls.destroy(); }catch(e){} hls=null; availableLevels=[]; }
       if(Hls.isSupported() && link.indexOf('.m3u8')!==-1){
         hls = new Hls();
@@ -108,15 +86,11 @@
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, ()=> {
           availableLevels = hls.levels||[];
-          if(availableLevels.length>1){ qualityBtn.style.display='block'; buildQualityMenu(); } 
-          else { qualityBtn.style.display='none'; }
+          qualityBtn.style.display = (availableLevels.length>1)?'block':'none';
+          if(availableLevels.length>1) buildQualityMenu();
           video.play().catch(()=>{});
         });
-      }else{
-        video.src = link;
-        video.play().catch(()=>{});
-        qualityBtn.style.display='none';
-      }
+      }else{ video.src = link; video.play().catch(()=>{}); qualityBtn.style.display='none'; }
       if(currentPlayingDiv) currentPlayingDiv.classList.remove('playing');
       currentPlayingDiv = div; currentPlayingDiv && currentPlayingDiv.classList.add('playing');
       scrollToPlayer();
@@ -141,7 +115,7 @@
 
     function renderMatches(matchesArray){
       container.innerHTML='';
-      if(!Array.isArray(matchesArray) || matchesArray.length===0){ container.textContent='No matches available.'; return; }
+      if(!Array.isArray(matchesArray)||matchesArray.length===0){ container.textContent='No matches available.'; return; }
       matchesArray.sort((a,b)=>{
         const statusA=((a.status||a.isLive)||'').toString().toLowerCase();
         const statusB=((b.status||b.isLive)||'').toString().toLowerCase();
@@ -186,8 +160,8 @@
       try{
         const allMatches=[];
         for(const url of apiURLs){
-          const resp=await fetch(url,{cache:'no-cache'});
-          const data=await resp.json();
+          const resp = await fetch(proxy + encodeURIComponent(url));
+          const data = await resp.json();
           let matchesArray=[];
           if(Array.isArray(data)) matchesArray=data;
           else if(Array.isArray(data.matches)) matchesArray=data.matches;
