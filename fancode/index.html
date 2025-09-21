@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PhoenixxxTv Fancode Live</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
+<style>
+:root {
+  --bg-color: #222; --text-color: #fff; --match-bg: #333;
+  --btn-primary-bg: #ff6600; --btn-primary-hover-bg: #cc5500; --btn-primary-text: #fff;
+  --status-live-color: #00ff00;
+  --title-color: #ff6600; --subtitle-color: #ffcc00;
+}
+
+body{
+  margin:0;
+  padding:20px;
+  font-family:'Roboto',sans-serif;
+  background-color:var(--bg-color);
+  color:var(--text-color);
+  box-sizing:border-box;
+}
+
+h1{text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;margin-bottom:5px;color:var(--title-color);}
+h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bottom:20px;color:var(--subtitle-color);}
+
+.file-container{
+  display:flex;
+  flex-wrap:wrap;
+  gap:15px;
+  justify-content:center;
+  margin-top:20px;
+}
+
+.match-item{
+  background-color:var(--match-bg);
+  border-radius:10px;
+  padding:15px;
+  width:calc(25% - 20px);
+  min-width:250px;
+  box-shadow:0 0 10px rgba(0,0,0,0.3);
+  cursor:pointer;
+  transition:transform 0.3s ease,box-shadow 0.3s ease;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  min-height:400px;
+}
+
+@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);}}
+@media(max-width:768px){.match-item{width:calc(50% - 20px);}}
+@media(max-width:480px){.match-item{width:100%;}}
+
+.match-item img{width:100%;height:auto;border-radius:8px;}
+
+.match-details{
+  margin-top:10px;
+  text-align:center;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex-grow:1;
+}
+
+.match-details h3{
+  margin:5px 0;
+  font-family:'Montserrat',sans-serif;
+  font-weight:700;
+  font-size:1.1em;
+  text-align:center;
+  word-wrap:break-word;
+}
+
+.match-time-button{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  gap:8px;
+  margin-top:auto;
+}
+
+.match-details p{
+  margin:0;
+  font-size:0.9em;
+  word-wrap:break-word;
+}
+
+.stream-button{
+  padding:12px 0;
+  background-color:var(--btn-primary-bg);
+  color:var(--btn-primary-text);
+  border:none;
+  border-radius:8px;
+  font-family:'Montserrat',sans-serif;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:50px;
+  gap:8px;
+  transition:background-color 0.3s;
+}
+.stream-button:hover:not(.disabled){background-color:var(--btn-primary-hover-bg);}
+.stream-button.disabled{
+  background-color:#555;
+  cursor:not-allowed;
+  color:#aaa;
+}
+
+/* ✅ Green dot only */
+.stream-button .live-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--status-live-color);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+#playerContainer{position:relative;max-width:800px;margin:20px auto;}
+#livePlayer{width:100%;border-radius:8px;background:#000;}
+#qualityBtn{
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  background:rgba(0,0,0,0.6);
+  color:#fff;
+  padding:5px 10px;
+  border-radius:5px;
+  font-size:0.9em;
+  cursor:pointer;
+  display:none;
+  z-index:10;
+}
+#qualityMenu{
+  position:absolute;
+  bottom:45px;
+  right:10px;
+  background:rgba(0,0,0,0.85);
+  color:#fff;
+  border-radius:5px;
+  display:none;
+  flex-direction:column;
+  z-index:11;
+  overflow:hidden;
+}
+
+#qualityMenu div{
+  padding:8px 12px;
+  cursor:pointer;
+}
+#qualityMenu div:hover{
+  background:rgba(255,255,255,0.1);
+}
+
+footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color:#111;color:#fff;font-family:'Montserrat',sans-serif;margin-top:40px;}
+</style>
+</head>
+<body>
+
+<h1>PhoenixxxTv Fancode Live</h1>
+<h2>Made with ♥️ by Lakshman</h2>
+
+<div id="playerContainer">
+  <video id="livePlayer" controls autoplay></video>
+  <div id="qualityBtn">Auto ▼</div>
+  <div id="qualityMenu"></div>
+</div>
+
+<div class="file-container" id="matches"></div>
+
+<footer>©Lakshman 2025 | All Rights Reserved</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+const refreshInterval = 180000;
+const container = document.getElementById('matches');
+const video = document.getElementById('livePlayer');
+const qualityBtn = document.getElementById('qualityBtn');
+const qualityMenu = document.getElementById('qualityMenu');
+let hls;
+let availableLevels = [];
+
+function getStreamLink(match){
+  if(match.dai_url) return match.dai_url;
+  if(match.url) return match.url;
+  if(match.stream && match.stream.url) return match.stream.url;
+  return null;
+}
+
+function isWazLive(match){
+  const t = (match.title || "").toLowerCase();
+  return t.includes('ওয়াজ লাইভ') || t.includes('waz live');
+}
+
+function playStream(link){
+  if(Hls.isSupported()){
+    if(hls) hls.destroy();
+    hls = new Hls();
+    hls.loadSource(link);
+    hls.attachMedia(video);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, function(){
+      video.play();
+      availableLevels = hls.levels;
+      if(availableLevels.length > 1){
+        qualityBtn.style.display = 'block';
+        buildQualityMenu();
+      } else {
+        qualityBtn.style.display = 'none';
+      }
+    });
+  } else if(video.canPlayType('application/vnd.apple.mpegurl')){
+    video.src = link;
+    video.addEventListener('loadedmetadata', ()=> video.play());
+    qualityBtn.style.display = 'none';
+  } else {
+    alert('HLS not supported in this browser.');
+  }
+}
+
+function buildQualityMenu(){
+  qualityMenu.innerHTML = '';
+  const autoOption = document.createElement('div');
+  autoOption.textContent = 'Auto';
+  autoOption.onclick = ()=>{
+    hls.currentLevel = -1;
+    qualityBtn.textContent = 'Auto ▼';
+    qualityMenu.style.display='none';
+  };
+  qualityMenu.appendChild(autoOption);
+
+  availableLevels.forEach((level,index)=>{
+    const div = document.createElement('div');
+    div.textContent = level.height + 'p';
+    div.onclick = ()=>{
+      hls.currentLevel = index;
+      qualityBtn.textContent = level.height + 'p ▼';
+      qualityMenu.style.display='none';
+    };
+    qualityMenu.appendChild(div);
+  });
+}
+
+// Toggle menu
+qualityBtn.onclick = ()=> {
+  qualityMenu.style.display = qualityMenu.style.display==='flex'?'none':'flex';
+};
+
+// Click outside to close
+document.addEventListener('click', (e)=>{
+  if(!qualityBtn.contains(e.target) && !qualityMenu.contains(e.target)){
+    qualityMenu.style.display='none';
+  }
+});
+
+function parseMatchTime(timeStr){
+  if(!timeStr) return null;
+  const parts = timeStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)?\s?(\d{2}-\d{2}-\d{4})?/i);
+  if(!parts) return null;
+  const hour = parseInt(parts[1]);
+  const minute = parseInt(parts[2]);
+  const second = parseInt(parts[3]);
+  const ampm = parts[4];
+  const dateStr = parts[5];
+
+  let finalHour = hour;
+  if(ampm){
+    if(ampm.toUpperCase()==="PM" && hour!==12) finalHour += 12;
+    if(ampm.toUpperCase()==="AM" && hour===12) finalHour = 0;
+  }
+
+  let date = new Date();
+  if(dateStr){
+    const [d,m,y] = dateStr.split('-').map(Number);
+    date = new Date(y,m-1,d,finalHour,minute,second);
+  } else {
+    date.setHours(finalHour,minute,second,0);
+  }
+  return date;
+}
+
+function renderMatches(data){
+  container.innerHTML = '';
+  if(!data.matches || !data.matches.length){
+    container.textContent = "No matches available right now.";
+    return;
+  }
+
+  const liveMatches = [];
+  const upcomingMatches = [];
+  const pastMatches = [];
+
+  data.matches.forEach(match=>{
+    const matchTime = parseMatchTime(match.startTime || match.start_date);
+    const now = new Date();
+    if(match.status && match.status.toLowerCase()==='live'){
+      liveMatches.push({...match, matchTime});
+    } else if(matchTime && matchTime > now){
+      upcomingMatches.push({...match, matchTime});
+    } else {
+      pastMatches.push({...match, matchTime});
+    }
+  });
+
+  liveMatches.sort((a,b)=>a.matchTime - b.matchTime);
+  upcomingMatches.sort((a,b)=>a.matchTime - b.matchTime);
+  pastMatches.sort((a,b)=>b.matchTime - a.matchTime);
+
+  const ordered = [...liveMatches, ...pastMatches, ...upcomingMatches];
+
+  ordered.forEach(match=>{
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
+    const statusLive = match.status && match.status.toLowerCase() === 'live';
+    const hasStream = !!getStreamLink(match);
+    const startTimeDisplay = (match.startTime || match.start_date) 
+      ? `<p>Start Time: ${match.startTime || match.start_date}</p>` : '';
+
+    div.innerHTML = `
+      <img src="${imgUrl}" alt="${match.title || 'Match Image'}">
+      <div class="match-details">
+        <h3>${match.title || 'Match Title'}</h3>
+        <div class="match-time-button">
+          ${startTimeDisplay}
+          <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
+            ${statusLive && hasStream ? '<div class="live-dot"></div>' : ''} 
+            ${hasStream ? 'Watch' : 'No Stream'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    const btn = div.querySelector('.stream-button');
+    if(hasStream){
+      btn.addEventListener('click', e=>{
+        e.stopPropagation();
+        const link = getStreamLink(match);
+        if(link){
+          playStream(link);
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+      });
+    }
+
+    container.appendChild(div);
+  });
+}
+
+async function fetchAndRender(){
+  try{
+    const resp = await fetch(apiURL, {cache:'no-cache'});
+    const data = await resp.json();
+    renderMatches(data);
+  }catch(err){
+    console.error(err);
+    container.textContent = "Failed to fetch live matches.";
+  }
+}
+
+fetchAndRender();
+setInterval(fetchAndRender, refreshInterval);
+</script>
+
+</body>
+</html>
