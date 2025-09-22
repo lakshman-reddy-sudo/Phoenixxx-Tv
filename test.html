@@ -22,32 +22,18 @@ body{
   box-sizing:border-box;
 }
 
-h1{
-  text-align:center;
-  font-family:'Montserrat',sans-serif;
-  font-size:2em;
-  margin-bottom:5px;
-  color:var(--title-color);
-  word-wrap: break-word;
-}
-
-h2{
-  text-align:center;
-  font-family:'Montserrat',sans-serif;
-  font-size:1em;
-  margin-bottom:20px;
-  color:var(--subtitle-color);
-}
+h1{text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;margin-bottom:5px;color:var(--title-color);}
+h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bottom:20px;color:var(--subtitle-color);}
 
 /* Dynamic player */
 #player-wrapper {
-  max-width: 90%;
+  max-width: 70%;
   margin: 10px auto 25px auto;
   display: none;
 }
 #player-wrapper .player-embed {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 ratio */
+  padding-bottom: 40%;
   height: 0;
   overflow: hidden;
   max-width: 100%;
@@ -88,9 +74,9 @@ h2{
   min-height:400px;
 }
 
-@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);}}
-@media(max-width:768px){.match-item{width:calc(50% - 20px);}}
-@media(max-width:480px){.match-item{width:100%;}}
+@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);} }
+@media(max-width:768px){.match-item{width:calc(50% - 20px);} }
+@media(max-width:480px){.match-item{width:100%;} }
 
 .match-item img{width:100%;height:auto;border-radius:8px;}
 
@@ -170,7 +156,7 @@ footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color
 </head>
 <body>
 
-<h1>PhoenixxxTv FanCode Live</h1>
+<h1>PhoenixxxTv Fancode Live</h1>
 <h2>Made with ♥️ by Lakshman</h2>
 
 <!-- Dynamic player -->
@@ -190,6 +176,9 @@ const container = document.getElementById('matches');
 const playerWrapper = document.getElementById('player-wrapper');
 const playerIframe = document.getElementById('dynamic-player');
 const proxyBaseURL = 'https://anym3u8player.com/tv/p.php?url=';
+
+// Keep track of currently playing stream
+let currentStream = null;
 
 function getStreamLink(match){
   if(match.dai_url) return match.dai_url;
@@ -235,9 +224,9 @@ function renderMatches(data){
         e.stopPropagation();
         const link = getStreamLink(match);
         if(link){
-          // Properly encoded iframe src
           playerIframe.src = proxyBaseURL + encodeURIComponent(link);
           playerWrapper.style.display = 'block';
+          currentStream = link; // remember currently playing
           playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
@@ -247,7 +236,8 @@ function renderMatches(data){
   });
 }
 
-async function fetchAndRender(){
+// Fetch matches without touching currently playing stream
+async function fetchMatches(){
   try{
     const resp = await fetch(apiURL, {cache:'no-cache'});
     const data = await resp.json();
@@ -258,8 +248,11 @@ async function fetchAndRender(){
   }
 }
 
-fetchAndRender();
-setInterval(fetchAndRender, 180000);
+// Initial load
+fetchMatches();
+
+// Refresh matches every 3 minutes
+setInterval(fetchMatches, 180000);
 </script>
 
 </body>
