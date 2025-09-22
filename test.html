@@ -20,10 +20,23 @@ body{
   background-color:var(--bg-color);
   color:var(--text-color);
   box-sizing:border-box;
+  text-align:center;
 }
 
-h1{text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;margin-bottom:5px;color:var(--title-color);}
-h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bottom:20px;color:var(--subtitle-color);}
+h1{
+  font-family:'Montserrat',sans-serif;
+  font-size:2em;
+  margin-bottom:5px;
+  color:var(--title-color);
+  word-wrap:break-word;
+}
+h2{
+  font-family:'Montserrat',sans-serif;
+  font-size:1em;
+  margin-bottom:20px;
+  color:var(--subtitle-color);
+  word-wrap:break-word;
+}
 
 /* Dynamic player */
 #player-wrapper {
@@ -33,7 +46,7 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
 }
 #player-wrapper .player-embed {
   position: relative;
-  padding-bottom: 40%;
+  padding-bottom: 40%; /* desktop ratio */
   height: 0;
   overflow: hidden;
   max-width: 100%;
@@ -47,6 +60,16 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   width: 100%;
   height: 100%;
   border: none;
+}
+
+/* Mobile adjustments */
+@media(max-width:480px){
+  #player-wrapper {
+    max-width: 95%;
+  }
+  #player-wrapper .player-embed {
+    padding-bottom: 56%; /* taller ratio for mobile */
+  }
 }
 
 /* Matches */
@@ -74,9 +97,9 @@ h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bo
   min-height:400px;
 }
 
-@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);} }
-@media(max-width:768px){.match-item{width:calc(50% - 20px);} }
-@media(max-width:480px){.match-item{width:100%;} }
+@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);}}
+@media(max-width:768px){.match-item{width:calc(50% - 20px);}}
+@media(max-width:480px){.match-item{width:100%;}}
 
 .match-item img{width:100%;height:auto;border-radius:8px;}
 
@@ -177,9 +200,6 @@ const playerWrapper = document.getElementById('player-wrapper');
 const playerIframe = document.getElementById('dynamic-player');
 const proxyBaseURL = 'https://anym3u8player.com/tv/p.php?url=';
 
-// Keep track of currently playing stream
-let currentStream = null;
-
 function getStreamLink(match){
   if(match.dai_url) return match.dai_url;
   if(match.url) return match.url;
@@ -187,6 +207,7 @@ function getStreamLink(match){
   return null;
 }
 
+// Render matches dynamically
 function renderMatches(data){
   container.innerHTML = '';
   if(!data.matches || !data.matches.length){
@@ -226,7 +247,6 @@ function renderMatches(data){
         if(link){
           playerIframe.src = proxyBaseURL + encodeURIComponent(link);
           playerWrapper.style.display = 'block';
-          currentStream = link; // remember currently playing
           playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
@@ -236,8 +256,8 @@ function renderMatches(data){
   });
 }
 
-// Fetch matches without touching currently playing stream
-async function fetchMatches(){
+// Fetch matches & refresh links every 3 mins without affecting current player
+async function fetchAndRender(){
   try{
     const resp = await fetch(apiURL, {cache:'no-cache'});
     const data = await resp.json();
@@ -248,11 +268,8 @@ async function fetchMatches(){
   }
 }
 
-// Initial load
-fetchMatches();
-
-// Refresh matches every 3 minutes
-setInterval(fetchMatches, 180000);
+fetchAndRender();
+setInterval(fetchAndRender, 180000); // refresh every 3 minutes
 </script>
 
 </body>
