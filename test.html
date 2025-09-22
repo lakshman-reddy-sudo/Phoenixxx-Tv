@@ -1,40 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PhoenixxxTv Fancode Live</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
-<style>
-:root {
-  --bg-color: #222; --text-color: #fff; --match-bg: #333;
-  --btn-primary-bg: #ff6600; --btn-primary-hover-bg: #cc5500; --btn-primary-text: #fff;
-  --status-live-color: #00ff00;
-  --title-color: #ff6600; --subtitle-color: #ffcc00;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhoenixxxTv SonyLiv Live</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #38bdf8;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --danger: #ef4444;
+      --success: #22c55e;
+    }
+    body {
+      background: var(--primary);
+      color: var(--text);
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    header {
+      text-align: center;
+      padding: 15px 10px;
+      background: var(--secondary);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .filter-btn {
+      padding: 5px 10px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    .matches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 10px;
+    }
+    .card {
+      background: var(--secondary);
+      border-radius: 10px;
+      width: 220px;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .watch-btn {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 5px 12px;
+      background: var(--success);
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+  <header>PhoenixxxTv SonyLiv Live</header>
 
-body{
-  margin:0;
-  padding:20px;
-  font-family:'Roboto',sans-serif;
-  background-color:var(--bg-color);
-  color:var(--text-color);
-  box-sizing:border-box;
-  text-align:center;
-}
+  <div class="filters">
+    <button class="filter-btn" onclick="filterMatches('all')">All</button>
+    <button class="filter-btn" onclick="filterMatches('live')">Live</button>
+    <button class="filter-btn" onclick="filterMatches('upcoming')">Upcoming</button>
+  </div>
 
-h1{
-  font-family:'Montserrat',sans-serif;
-  font-size:2em;
-  margin-bottom:5px;
-  color:var(--title-color);
-  word-wrap:break-word;
-}
-h2{
-  font-family:'Montserrat',sans-serif;
-  font-size:1em;
-  margin-bottom:20px;
-  color:var(--subtitle-color);
+  <div id="matches" class="matches"></div>
+
+  <script>
+    let allMatches = [];
+    let currentFilter = "all";
+
+    async function loadMatches() {
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json");
+        const data = await res.json();
+        allMatches = data.matches || data.events || data.data || [];
+        renderMatches();
+      } catch (err) {
+        console.error("Error fetching matches:", err);
+        document.getElementById("matches").innerHTML =
+          `<p style="text-align:center;color:#f43f5e;">⚠️ Unable to load events.</p>`;
+      }
+    }
+
+    function renderMatches() {
+      const container = document.getElementById("matches");
+      container.innerHTML = "";
+      let filtered = allMatches;
+
+      if (currentFilter === "live") {
+        filtered = allMatches.filter(m => m.isLive);
+      } else if (currentFilter === "upcoming") {
+        filtered = allMatches.filter(m => !m.isLive);
+      }
+
+      if (!filtered.length) {
+        container.innerHTML = `<p style="color:#94a3b8;text-align:center;">No ${currentFilter} matches available</p>`;
+        return;
+      }
+
+      filtered.forEach(match => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${match.image}" alt="${match.match_name}">
+          <h3>${match.match_name}</h3>
+          <a class="watch-btn" href="player.html?url=${encodeURIComponent(getStreamLink(match))}">
+            <span class="live-dot"></span>Watch
+          </a>`;
+        container.appendChild(card);
+      });
+    }
+
+    function getStreamLink(match) {
+      return match.dai_url || match.pub_url || match.video_url || match.url || "#";
+    }
+
+    function filterMatches(filter) {
+      currentFilter = filter;
+      renderMatches();
+    }
+
+    // First load
+    loadMatches();
+
+    // Auto-refresh every 3 minutes
+    setInterval(loadMatches, 180000);
+  </script>
+</body>
+</html>  color:var(--subtitle-color);
   word-wrap:break-word;
 }
 
