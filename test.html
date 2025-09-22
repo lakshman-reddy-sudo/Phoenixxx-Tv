@@ -1,252 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PhoenixxxTv Fancode Live</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
-<style>
-:root {
-  --bg-color: #222; --text-color: #fff; --match-bg: #333;
-  --btn-primary-bg: #ff6600; --btn-primary-hover-bg: #cc5500; --btn-primary-text: #fff;
-  --status-live-color: #00ff00;
-  --title-color: #ff6600; --subtitle-color: #ffcc00;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhoenixxxTv</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+    }
 
-body{
-  margin:0;
-  padding:20px;
-  font-family:'Roboto',sans-serif;
-  background-color:var(--bg-color);
-  color:var(--text-color);
-  box-sizing:border-box;
-}
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* ensures footer at bottom */
+      text-align: center;
+    }
 
-h1{text-align:center;font-family:'Montserrat',sans-serif;font-size:2em;margin-bottom:5px;color:var(--title-color);}
-h2{text-align:center;font-family:'Montserrat',sans-serif;font-size:1em;margin-bottom:20px;color:var(--subtitle-color);}
+    h1 {
+      margin-top: 50px;
+      color: #ff6600;
+      font-family: 'Montserrat', sans-serif;
+    }
 
-/* Dynamic player */
-#player-wrapper {
-  max-width: 70%;
-  margin: 10px auto 25px auto;
-  display: none;
-}
-#player-wrapper .player-embed {
-  position: relative;
-  padding-bottom: 40%; /* smaller height */
-  height: 0;
-  overflow: hidden;
-  max-width: 100%;
-  border-radius: 10px;
-  box-shadow: 0 0 12px rgba(0,0,0,0.5);
-}
-#player-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap; /* allows wrapping on small screens */
+      gap: 15px;       /* spacing between buttons both vertically and horizontally */
+      margin: 30px 0;
+    }
 
-/* Matches */
-.file-container{
-  display:flex;
-  flex-wrap:wrap;
-  gap:15px;
-  justify-content:center;
-  margin-top:20px;
-}
+    nav a {
+      padding: 12px 25px;
+      background-color: #ff6600;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+      transition: background 0.3s;
+      flex: 0 0 auto; /* prevents buttons from stretching */
+    }
 
-.match-item{
-  background-color:var(--match-bg);
-  border-radius:10px;
-  padding:15px;
-  width:calc(25% - 20px);
-  min-width:250px;
-  box-shadow:0 0 10px rgba(0,0,0,0.3);
-  cursor:pointer;
-  transition:transform 0.3s ease,box-shadow 0.3s ease;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  align-items:center;
-  min-height:400px;
-}
+    nav a:hover {
+      background-color: #cc5500;
+    }
 
-@media(max-width:1024px){.match-item{width:calc(33.333% - 20px);}}
-@media(max-width:768px){.match-item{width:calc(50% - 20px);}}
-@media(max-width:480px){.match-item{width:100%;}}
+    footer {
+      padding: 20px;
+      font-size: 0.9em;
+      color: #aaa;
+      background-color: #111;
+    }
 
-.match-item img{width:100%;height:auto;border-radius:8px;}
-
-.match-details{
-  margin-top:10px;
-  text-align:center;
-  width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  flex-grow:1;
-}
-
-.match-details h3{
-  margin:5px 0;
-  font-family:'Montserrat',sans-serif;
-  font-weight:700;
-  font-size:1.1em;
-  text-align:center;
-  word-wrap:break-word;
-}
-
-.match-time-button{
-  display:flex;
-  flex-direction:column;
-  width:100%;
-  gap:8px;
-  margin-top:auto;
-}
-
-.match-details p{
-  margin:0;
-  font-size:0.9em;
-  word-wrap:break-word;
-}
-
-.stream-button{
-  padding:12px 0;
-  background-color:var(--btn-primary-bg);
-  color:var(--btn-primary-text);
-  border:none;
-  border-radius:8px;
-  font-family:'Montserrat',sans-serif;
-  font-weight:700;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  width:100%;
-  min-height:50px;
-  gap:8px;
-  transition:background-color 0.3s;
-}
-.stream-button:hover:not(.disabled){background-color:var(--btn-primary-hover-bg);}
-.stream-button.disabled{
-  background-color:#555;
-  cursor:not-allowed;
-  color:#aaa;
-}
-
-/* Green live dot */
-.stream-button .live-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: var(--status-live-color);
-  animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-  0% { transform: scale(0.9); opacity: 0.7; }
-  50% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.7; }
-}
-
-footer{width:100%;text-align:center;padding:20px 10px 24px 10px;background-color:#111;color:#fff;font-family:'Montserrat',sans-serif;margin-top:40px;}
-</style>
+    main {
+      flex: 1; /* takes the remaining space */
+    }
+  </style>
 </head>
 <body>
 
-<h1>PhoenixxxTv Fancode Live</h1>
-<h2>Made with ♥️ by Lakshman</h2>
+  <main>
+    <h1>Welcome to PhoenixxxTv</h1>
 
-<!-- Dynamic player -->
-<div id="player-wrapper">
-  <div class="player-embed">
-    <iframe id="dynamic-player" webkitAllowFullScreen mozallowfullscreen allowfullscreen frameborder="0" allow="autoplay"></iframe>
-  </div>
-</div>
+    <nav>
+      <a href="/fancode/index.html">FanCode Live</a>
+      <a href="/sonyliv/index.html">SonyLiv Live</a>
+    </nav>
 
-<div class="file-container" id="matches"></div>
+    <p>Enjoy live sports streaming from FanCode and SonyLiv!</p>
+  </main>
 
-<footer>©Lakshman 2025 | All Rights Reserved</footer>
-
-<script>
-const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
-const container = document.getElementById('matches');
-const playerWrapper = document.getElementById('player-wrapper');
-const playerIframe = document.getElementById('dynamic-player');
-
-const proxyBaseURL = 'https://anym3u8player.com/tv/p.php?url=';
-
-function getStreamLink(match){
-  if(match.dai_url) return match.dai_url;
-  if(match.url) return match.url;
-  if(match.stream && match.stream.url) return match.stream.url;
-  return null;
-}
-
-function renderMatches(data){
-  container.innerHTML = '';
-  if(!data.matches || !data.matches.length){
-    container.textContent = "No matches available right now.";
-    return;
-  }
-
-  data.matches.forEach(match => {
-    const div = document.createElement('div');
-    div.className = 'match-item';
-
-    const imgUrl = match.src || 'https://via.placeholder.com/300x200?text=No+Image';
-    const statusLive = match.status && match.status.toLowerCase() === 'live';
-    const hasStream = !!getStreamLink(match);
-    const startTimeDisplay = (match.startTime || match.start_date) 
-      ? `<p>Start Time: ${match.startTime || match.start_date}</p>` : '';
-
-    div.innerHTML = `
-      <img src="${imgUrl}" alt="${match.title || 'Match Image'}">
-      <div class="match-details">
-        <h3>${match.title || 'Match Title'}</h3>
-        <div class="match-time-button">
-          ${startTimeDisplay}
-          <button class="stream-button ${hasStream?'':'disabled'}" ${hasStream?'':'disabled'}>
-            ${statusLive && hasStream ? '<div class="live-dot"></div>' : ''} 
-            ${hasStream ? 'Watch Now' : 'No Stream'}
-          </button>
-        </div>
-      </div>
-    `;
-
-    const btn = div.querySelector('.stream-button');
-    if(hasStream){
-      btn.addEventListener('click', e => {
-        e.stopPropagation();
-        const link = getStreamLink(match);
-        if(link){
-          playerIframe.src = proxyBaseURL + encodeURIComponent(link);
-          playerWrapper.style.display = 'block';
-          playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    }
-
-    container.appendChild(div);
-  });
-}
-
-async function fetchAndRender(){
-  try{
-    const resp = await fetch(apiURL, {cache:'no-cache'});
-    const data = await resp.json();
-    renderMatches(data);
-  }catch(err){
-    console.error(err);
-    container.textContent = "Failed to fetch live matches.";
-  }
-}
-
-fetchAndRender();
-setInterval(fetchAndRender, 180000);
-</script>
+  <footer>
+    © 2025 PhoenixxxTv | All Rights Reserved
+  </footer>
 
 </body>
 </html>
