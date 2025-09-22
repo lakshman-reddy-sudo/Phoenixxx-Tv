@@ -44,10 +44,28 @@ h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:
 .ripple { position:absolute; border-radius:50%; transform:scale(0); background: rgba(255,255,255,0.18); pointer-events:none; animation: ripple 600ms cubic-bezier(.2,.9,.2,1); }
 @keyframes ripple { to { transform: scale(4); opacity:0; } }
 
-/* Dynamic player */
-#player-wrapper { max-width:70%; margin:10px auto 25px auto; display:none; }
-#player-wrapper .player-embed { position:relative; padding-bottom:40%; height:0; overflow:hidden; max-width:100%; border-radius:10px; box-shadow:0 0 12px rgba(0,0,0,0.5); }
-#player-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; }
+/* Dynamic player - fully responsive */
+#player-wrapper {
+  max-width: 90%;
+  margin: 10px auto 25px auto;
+  display: none;
+}
+#player-wrapper .player-embed {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* responsive 16:9 */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(0,0,0,0.5);
+}
+#player-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
 
 /* Matches grid */
 .file-container{ display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-top:20px; }
@@ -78,10 +96,8 @@ h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:
 .stream-button .live-dot { width:14px; height:14px; border-radius:50%; background-color:var(--status-live-color); animation:pulse 1.5s infinite; }
 @keyframes pulse { 0%{ transform:scale(0.9); opacity:0.7 } 50%{ transform:scale(1.1); opacity:1 } 100%{ transform:scale(0.9); opacity:0.7 } }
 
-/* small responsive tweaks */
 footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111; color:#fff; margin-top:36px; font-family:'Montserrat',sans-serif; }
 
-/* accessible focus ring */
 .tab-btn:focus{ outline:3px solid rgba(255,102,0,0.18); outline-offset:4px; }
 .match-item:focus-within{ outline:2px solid rgba(255,102,0,0.08); outline-offset:3px; }
 
@@ -92,7 +108,7 @@ footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111;
 <h1>PhoenixxxTv Fancode Live</h1>
 <h2>Made with ♥️ by Lakshman</h2>
 
-<!-- Filter Tabs (indicator handled via JS) -->
+<!-- Filter Tabs -->
 <div class="tabs" id="tabs">
   <button type="button" class="tab-btn active" data-filter="all">All Matches</button>
   <button type="button" class="tab-btn" data-filter="LIVE">Live Now</button>
@@ -112,18 +128,16 @@ footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111;
 <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
 <script>
-/* ---------- Config ---------- */
 const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
 const container = document.getElementById('matches');
 const playerWrapper = document.getElementById('player-wrapper');
 const playerIframe = document.getElementById('dynamic-player');
-const proxyBaseURL = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/ios='; // UPDATED
+const proxyBaseURL = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/ios=';
 
 let allMatches = [];
 let currentFilter = 'all';
 let activeStreamLink = null;
 
-/* ---------- Helper: get stream link from match object ---------- */
 function getStreamLink(match){
   if(!match) return null;
   if(match.dai_url) return match.dai_url;
@@ -132,20 +146,12 @@ function getStreamLink(match){
   return null;
 }
 
-/* ---------- Render matches into DOM ---------- */
 function renderMatches(){
   container.innerHTML = '';
   let filtered = allMatches;
-  if(currentFilter !== 'all'){
-    filtered = allMatches.filter(m => (m.status || '').toUpperCase() === currentFilter);
-  }
-
+  if(currentFilter !== 'all') filtered = allMatches.filter(m => (m.status || '').toUpperCase() === currentFilter);
   if(!filtered.length){
-    container.innerHTML = `<div class="col-span-full text-center py-10">
-      <div style="font-size:48px; opacity:0.6;">😕</div>
-      <h3 style="margin:8px 0;">No matches found</h3>
-      <p style="opacity:0.7">Try a different filter</p>
-    </div>`;
+    container.innerHTML = `<div class="col-span-full text-center py-10"><div style="font-size:48px; opacity:0.6;">😕</div><h3 style="margin:8px 0;">No matches found</h3><p style="opacity:0.7">Try a different filter</p></div>`;
     return;
   }
 
@@ -177,25 +183,19 @@ function renderMatches(){
     `;
 
     const matchLink = getStreamLink(match);
-    if(matchLink && activeStreamLink && matchLink === activeStreamLink){
-      div.classList.add('active');
-    }
+    if(matchLink && activeStreamLink && matchLink === activeStreamLink) div.classList.add('active');
 
     function playMatch(){
       if(!matchLink) return;
       playerIframe.src = proxyBaseURL + encodeURIComponent(matchLink);
       playerWrapper.style.display = 'block';
       playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
       document.querySelectorAll('.match-item.active').forEach(el => el.classList.remove('active'));
       div.classList.add('active');
-
       activeStreamLink = matchLink;
     }
 
-    div.addEventListener('click', (e) => {
-      playMatch();
-    });
+    div.addEventListener('click', playMatch);
 
     const btn = div.querySelector('.stream-button');
     if(btn){
@@ -211,7 +211,6 @@ function renderMatches(){
         r.style.top = (e.clientY - rect.top - size/2) + 'px';
         btn.appendChild(r);
         setTimeout(()=> r.remove(), 650);
-
         playMatch();
       });
     }
@@ -220,20 +219,19 @@ function renderMatches(){
   });
 }
 
-/* ---------- Fetch & auto-refresh ---------- */
 async function fetchAndRender(){
   try{
     const resp = await fetch(apiURL, { cache: 'no-cache' });
     const data = await resp.json();
     allMatches = data.matches || [];
     renderMatches();
-  } catch(err){
+  }catch(err){
     console.error(err);
     container.innerHTML = `<div style="padding:24px;">Failed to fetch live matches.</div>`;
   }
 }
 
-/* ---------- Tabs behaviour (indicator + ripple + animations) ---------- */
+/* Tabs behaviour */
 const tabsContainer = document.getElementById('tabs');
 const tabButtons = Array.from(tabsContainer.querySelectorAll('.tab-btn'));
 const tabIndicator = document.getElementById('tabIndicator');
@@ -274,17 +272,9 @@ tabButtons.forEach(btn => {
     btn.appendChild(ripple);
     setTimeout(()=> ripple.remove(), 650);
 
-    const filter = btn.dataset.filter || 'all';
-    currentFilter = filter;
+    currentFilter = btn.dataset.filter || 'all';
     activateTabButton(btn);
     renderMatches();
-  });
-
-  btn.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter' || e.key === ' '){
-      e.preventDefault();
-      btn.click();
-    }
   });
 });
 
@@ -299,7 +289,7 @@ window.addEventListener('resize', () => {
 });
 
 fetchAndRender();
-setInterval(fetchAndRender, 180000); // refresh every 3 minutes
+setInterval(fetchAndRender, 180000); // refresh every 3 mins
 </script>
 
 </body>
