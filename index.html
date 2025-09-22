@@ -28,12 +28,14 @@
     }
 
     nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap; /* allows wrapping on small screens */
+      gap: 15px;       /* spacing between buttons both vertically and horizontally */
       margin: 30px 0;
     }
 
     nav a {
-      display: inline-block;
-      margin: 0 20px;
       padding: 12px 25px;
       background-color: #ff6600;
       color: #fff;
@@ -41,6 +43,7 @@
       font-weight: bold;
       border-radius: 8px;
       transition: background 0.3s;
+      flex: 0 0 auto; /* prevents buttons from stretching */
     }
 
     nav a:hover {
