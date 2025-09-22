@@ -18,24 +18,47 @@ body{ margin:0; padding:20px; font-family:'Roboto',sans-serif; background:var(--
 h1{ font-family:'Montserrat',sans-serif; font-size:2rem; margin:0 0 6px; color:var(--title-color); }
 h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:var(--subtitle-color); }
 
-/* Tabs + animated indicator */
-.tabs { display:flex; justify-content:center; gap:12px; align-items:center; position:relative; margin-bottom:18px; flex-wrap:wrap; padding:6px; }
-.tab-btn{
-  position:relative;
-  appearance:none;
-  -webkit-appearance:none;
-  background:#444; border:0; color:#fff; padding:10px 20px; border-radius:20px;
-  cursor:pointer; font-weight:600; transition: transform 180ms cubic-bezier(.2,.9,.2,1), background 220ms, box-shadow 220ms;
-  overflow:hidden;
+/* Tabs + animated indicator - fixed for mobile */
+.tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap; /* allow wrapping on very small screens */
+  position: relative;
+  margin-bottom: 18px;
+  padding: 6px;
 }
-.tab-btn:hover{ transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 22px rgba(0,0,0,0.4); }
-.tab-btn:active{ transform: scale(0.99); }
-.tab-btn.active{ background:var(--btn-primary-bg); color:#111; transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 30px rgba(255,102,0,0.18); }
 
-/* moving underline indicator */
-.tab-indicator{
-  position:absolute; height:4px; background: linear-gradient(90deg, #ffd27a, #ff7a00);
-  border-radius:6px; bottom: -6px; transition: left 260ms cubic-bezier(.2,.9,.2,1), width 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms;
+.tab-btn {
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #444;
+  border: 0;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 180ms cubic-bezier(.2,.9,.2,1), background 220ms, box-shadow 220ms;
+  overflow: hidden;
+  white-space: nowrap; /* prevent breaking text */
+  flex-shrink: 0; /* prevent shrinking in small screens */
+}
+
+.tab-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 22px rgba(0,0,0,0.4); }
+.tab-btn:active { transform: scale(0.99); }
+.tab-btn.active { background: var(--btn-primary-bg); color: #111; transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 30px rgba(255,102,0,0.18); }
+
+/* moving underline indicator - properly aligned under buttons */
+.tab-indicator {
+  position: absolute;
+  height: 4px;
+  background: linear-gradient(90deg, #ffd27a, #ff7a00);
+  border-radius: 6px;
+  bottom: 0; /* properly placed */
+  transition: left 260ms cubic-bezier(.2,.9,.2,1), width 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms;
   box-shadow: 0 6px 18px rgba(255,122,0,0.18);
   will-change: left, width;
 }
@@ -240,8 +263,8 @@ function setIndicatorTo(button, instant = false){
   if(!button) { tabIndicator.style.opacity = '0'; return; }
   const containerRect = tabsContainer.getBoundingClientRect();
   const btnRect = button.getBoundingClientRect();
-  const left = btnRect.left - containerRect.left + 6;
-  const width = btnRect.width - 12;
+  const left = btnRect.left - containerRect.left;
+  const width = btnRect.width;
   tabIndicator.style.opacity = '1';
   if(instant){
     tabIndicator.style.transition = 'none';
