@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Live Stream Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="referrer" content="no-referrer"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.css"/>
+  <style>
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+    }
+    html, body {
+      height: 100%;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+    }
+    .plyr {
+      height: 100%;
+    }
+
+    .telegram-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    .popup-box {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      padding: 25px 30px;
+      border-radius: 20px;
+      max-width: 350px;
+      text-align: center;
+    }
+
+    .popup-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    .popup-btn {
+      background: #0088cc;
+      border: none;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .cancel-btn { background: #444; }
+
+    .telegram-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(0,136,204,0.85);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 200;
+    }
+
+    .speed-display {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: monospace;
+      z-index: 150;
+      display: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Telegram Popup -->
+  <div class="telegram-popup" id="telegramPopup">
+    <div class="popup-box">
+      <h2>🎉 Join Our Telegram Channel</h2>
+      <p>Get instant live updates, highlights, and exclusive content!</p>
+      <div class="popup-buttons">
+        <button class="popup-btn" id="joinBtn">Join Now</button>
+        <button class="popup-btn cancel-btn" id="cancelBtn">Later</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Player -->
+  <div style="position:relative; height:100vh;">
+    <a href="https://t.me/+OACGYQBHrIJmM2Y1" target="_blank" class="telegram-btn">Join Telegram</a>
+    <video id="player" muted controls crossorigin playsinline></video>
+    <div id="speedDisplay" class="speed-display"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
+  <script>
+    const popup = document.getElementById('telegramPopup');
+    const joinBtn = document.getElementById('joinBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const video = document.getElementById('player');
+    const speedDisplay = document.getElementById('speedDisplay');
+
+    // Block video until popup is dismissed
+    video.pause();
+    video.style.filter = 'blur(5px)';
+    
+    joinBtn.onclick = () => {
+      window.open("https://t.me/+OACGYQBHrIJmM2Y1", "_blank");
+      closePopup();
+    };
+
+    cancelBtn.onclick = () => {
+      closePopup();
+    };
+
+    function closePopup() {
+      popup.style.display = 'none';
+      video.style.filter = 'none';
+      video.play();
+    }
+
+    const plyrOptions = {
+      seekTime: 10,
+      controls: [
+        'play-large','rewind','play','fast-forward','progress','current-time',
+        'duration','mute','volume','settings','pip','fullscreen'
+      ]
+    };
+
+    // 🔥 your proxy (with https)
+    const proxyBaseURL = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/ios=';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const raw = new URLSearchParams(window.location.search).get('stream');
+      if (!raw) {
+        document.body.innerHTML = '<p style="color:white;text-align:center;margin-top:20%;">No stream link provided!</p>';
+        return;
+      }
+
+      // ✅ use proxy + original url
+      const source = proxyBaseURL + encodeURIComponent(raw);
+
+      if (Hls.isSupported()) {
+        const hls = new Hls({ maxMaxBufferLength: 100 });
+        hls.loadSource(source);
+        hls.attachMedia(video);
+
+        // optional speed meter; safe-guarded
+        let lastLoaded = 0;
+        let lastTime = performance.now();
+        setInterval(() => {
+          const stats = hls.stats || {};
+          const total = stats.total || 0;
+          const now = performance.now();
+          const dt = (now - lastTime) / 1000;
+          const diff = total - lastLoaded;
+          if (dt > 0 && diff > 0) {
+            const bps = (diff * 8) / dt;
+            speedDisplay.style.display = 'block';
+            speedDisplay.textContent =
+              bps > 1e6 ? (bps/1e6).toFixed(2)+' Mbps' :
+              bps > 1e3 ? (bps/1e3).toFixed(1)+' Kbps' :
+              Math.round(bps)+' bps';
+          }
+          lastTime = now;
+          lastLoaded = total;
+        }, 2000);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          const qualities = hls.levels.map(l => l.height).filter(Boolean);
+          const player = new Plyr(video, {
+            ...plyrOptions,
+            quality: qualities.length ? {
+              default: qualities[0],
+              options: qualities,
+              forced: true,
+              onChange: q => {
+                hls.levels.forEach((level, i) => {
+                  if (level.height === q) hls.currentLevel = i;
+                });
+              }
+            } : {}
+          });
+        });
+      } else {
+        video.src = source;
+        new Plyr(video, plyrOptions);
+      }
+    });
+
+    // Optional: block common inspect shortcuts
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (['F12'].includes(e.key) || 
+          (e.ctrlKey && e.shiftKey && ['I','J'].includes(e.key)) || 
+          (e.ctrlKey && e.key === 'U')) e.preventDefault();
+    });
+  </script>
+</body>
+</html>
