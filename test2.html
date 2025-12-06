@@ -129,7 +129,7 @@ footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111;
 <body>
 
 <h1>PhoenixxxTv Fancode Live</h1>
-<h2>Made with ♥️ by Lakshman</h2>
+<h2>Made with♥️ by Lakshman</h2>
 
 <!-- Filter Tabs -->
 <div class="tabs" id="tabs">
@@ -211,10 +211,10 @@ function renderMatches(){
     function playMatch(){
       if(!matchLink) return;
 
-      // 🔴 OLD:
+      // OLD (direct worker):
       // playerIframe.src = proxyBaseURL + encodeURIComponent(matchLink);
 
-      // ✅ NEW: load your JW player page and pass original stream in query
+      // ✅ NEW: load JW player page and pass raw stream
       playerIframe.src = 'player.html?stream=' + encodeURIComponent(matchLink);
 
       playerWrapper.style.display = 'block';
