@@ -155,8 +155,8 @@
       ]
     };
 
-    // 🔥 your proxy (with https)
-    const proxyBaseURL = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/ios=';
+    // 🔥 use ROOT proxy (/?url=), not /ios=
+    const workerBase = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/';
 
     document.addEventListener('DOMContentLoaded', () => {
       const raw = new URLSearchParams(window.location.search).get('stream');
@@ -165,15 +165,14 @@
         return;
       }
 
-      // ✅ use proxy + original url
-      const source = proxyBaseURL + encodeURIComponent(raw);
+      // worker expects ?url=... (&all=1 to proxy all segments)
+      const source = workerBase + '?url=' + encodeURIComponent(raw) + '&all=1';
 
       if (Hls.isSupported()) {
         const hls = new Hls({ maxMaxBufferLength: 100 });
         hls.loadSource(source);
         hls.attachMedia(video);
 
-        // optional speed meter; safe-guarded
         let lastLoaded = 0;
         let lastTime = performance.now();
         setInterval(() => {
