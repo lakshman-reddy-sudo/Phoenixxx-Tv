@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>PhoenixxxTv Fancode Live</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
-
-<!-- JW Player -->
-<script src="https://cdn.jwplayer.com/libraries/IDzF9Zmk.js"></script>
-
 <style>
 :root{
   --bg-color:#222; --text-color:#fff; --match-bg:#333;
@@ -18,195 +14,311 @@
 }
 
 /* Page layout */
-body{ margin:0; padding:20px; font-family:'Roboto',sans-serif; background:var(--bg-color); color:var(--text-color); text-align:center; }
+body{ margin:0; padding:20px; font-family:'Roboto',sans-serif; background:var(--bg-color); color:var(--text-color); box-sizing:border-box; text-align:center; }
+h1{ font-family:'Montserrat',sans-serif; font-size:2rem; margin:0 0 6px; color:var(--title-color); }
+h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:var(--subtitle-color); }
 
-/* Player container */
+/* Tabs + animated indicator - fixed for mobile */
+.tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap; /* allow wrapping on very small screens */
+  position: relative;
+  margin-bottom: 18px;
+  padding: 6px;
+}
+
+.tab-btn {
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #444;
+  border: 0;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 180ms cubic-bezier(.2,.9,.2,1), background 220ms, box-shadow 220ms;
+  overflow: hidden;
+  white-space: nowrap; /* prevent breaking text */
+  flex-shrink: 0; /* prevent shrinking in small screens */
+}
+
+.tab-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 22px rgba(0,0,0,0.4); }
+.tab-btn:active { transform: scale(0.99); }
+.tab-btn.active { background: var(--btn-primary-bg); color: #111; transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 30px rgba(255,102,0,0.18); }
+
+/* moving underline indicator - properly aligned under buttons */
+.tab-indicator {
+  position: absolute;
+  height: 4px;
+  background: linear-gradient(90deg, #ffd27a, #ff7a00);
+  border-radius: 6px;
+  bottom: 0; /* properly placed */
+  transition: left 260ms cubic-bezier(.2,.9,.2,1), width 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms;
+  box-shadow: 0 6px 18px rgba(255,122,0,0.18);
+  will-change: left, width;
+}
+
+/* ripple */
+.ripple { position:absolute; border-radius:50%; transform:scale(0); background: rgba(255,255,255,0.18); pointer-events:none; animation: ripple 600ms cubic-bezier(.2,.9,.2,1); }
+@keyframes ripple { to { transform: scale(4); opacity:0; } }
+
+/* Dynamic player - fully responsive */
 #player-wrapper {
   max-width: 90%;
   margin: 10px auto 25px auto;
   display: none;
 }
-.player-embed {
+#player-wrapper .player-embed {
+  position: relative;
   width: 100%;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9; /* responsive 16:9 */
   border-radius: 10px;
   overflow: hidden;
-  background: #000;
-  box-shadow:0 0 12px rgba(0,0,0,0.5);
+  box-shadow: 0 0 12px rgba(0,0,0,0.5);
 }
-#dynamic-player { width:100%; height:100%; }
-
-/* Tabs */
-.tabs { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
-.tab-btn {
-  background:#444; border:0; color:#fff;
-  padding:10px 16px; border-radius:20px;
-  cursor:pointer; font-weight:600;
+#player-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
-.tab-btn.active { background:var(--btn-primary-bg); color:#111; }
 
-/* Match grid */
+/* Matches grid */
 .file-container{ display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-top:20px; }
-.match-item{ background:var(--match-bg); border-radius:10px; padding:15px; width:280px; cursor:pointer; position:relative; }
-.match-item img{ width:100%; border-radius:8px; }
-.badge { position:absolute; top:8px; padding:4px 8px; border-radius:6px; font-size:0.8rem; }
-.badge-category{ left:8px; background:#555; }
-.badge-status{ right:8px; background:#e53935; }
-.match-details h3{ margin:6px 0; }
-.stream-button{
-  margin-top:8px; background:var(--btn-primary-bg); border:none;
-  padding:12px; border-radius:8px; color:#fff; cursor:pointer; font-weight:700;
-}
-.stream-button.disabled{ background:#555; cursor:not-allowed; }
-.live-dot{ width:10px; height:10px; border-radius:50%; background:var(--status-live-color); display:inline-block; margin-right:6px; }
+.match-item{ background-color:var(--match-bg); border-radius:10px; padding:15px; width:calc(25% - 20px); min-width:250px; box-shadow:0 0 10px rgba(0,0,0,0.35); cursor:pointer; transition: transform 0.25s ease, box-shadow 0.3s ease; display:flex; flex-direction:column; position:relative; min-height:400px; }
+.match-item:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 18px 40px rgba(0,0,0,0.45); }
+.match-item.active { border:2px solid var(--btn-primary-bg); box-shadow: 0 0 28px var(--btn-primary-bg); animation: glow 1.2s ease-in-out infinite alternate; }
+@keyframes glow { from { box-shadow: 0 0 16px var(--btn-primary-bg); } to { box-shadow: 0 0 28px var(--btn-primary-bg); } }
+
+@media(max-width:1024px){ .match-item{ width:calc(33.333% - 20px); } }
+@media(max-width:768px){ .match-item{ width:calc(50% - 20px); } }
+@media(max-width:480px){ .match-item{ width:100%; } }
+
+.match-item img{ width:100%; height:auto; border-radius:8px; object-fit:cover; }
+
+/* badges */
+.badge { position:absolute; top:10px; padding:4px 8px; font-size:0.8em; border-radius:6px; font-weight:700; }
+.badge-category { left:10px; background:#555; color:#fff; }
+.badge-status { right:10px; background:#e53935; color:#fff; }
+.badge-status.upcoming { background:#ff6d00; color:#111; }
+
+/* details & button */
+.match-details{ margin-top:10px; text-align:center; width:100%; display:flex; flex-direction:column; align-items:center; flex-grow:1; }
+.match-details h3{ margin:6px 0; font-family:'Montserrat',sans-serif; font-weight:700; font-size:1.05em; text-align:center; }
+.match-time-button{ display:flex; flex-direction:column; width:100%; gap:8px; margin-top:auto; }
+.stream-button{ padding:12px 0; background-color:var(--btn-primary-bg); color:var(--btn-primary-text); border:none; border-radius:8px; font-family:'Montserrat',sans-serif; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; width:100%; min-height:50px; gap:8px; transition: background-color 0.25s, transform 0.12s; position:relative; overflow:hidden; }
+.stream-button:hover:not(.disabled){ background-color:var(--btn-primary-hover-bg); transform: translateY(-3px); }
+.stream-button.disabled{ background-color:#555; cursor:not-allowed; color:#aaa; }
+.stream-button .live-dot { width:14px; height:14px; border-radius:50%; background-color:var(--status-live-color); animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%{ transform:scale(0.9); opacity:0.7 } 50%{ transform:scale(1.1); opacity:1 } 100%{ transform:scale(0.9); opacity:0.7 } }
+
+footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111; color:#fff; margin-top:36px; font-family:'Montserrat',sans-serif; }
+
+.tab-btn:focus{ outline:3px solid rgba(255,102,0,0.18); outline-offset:4px; }
+.match-item:focus-within{ outline:2px solid rgba(255,102,0,0.08); outline-offset:3px; }
+
 </style>
 </head>
-
 <body>
 
 <h1>PhoenixxxTv Fancode Live</h1>
-<h2>Made with♥️ by Lakshman</h2>
+<h2>Made with ♥️ by Lakshman</h2>
 
-<!-- Tabs -->
+<!-- Filter Tabs -->
 <div class="tabs" id="tabs">
-  <button type="button" class="tab-btn active" data-filter="all">All</button>
-  <button type="button" class="tab-btn" data-filter="LIVE">Live</button>
+  <button type="button" class="tab-btn active" data-filter="all">All Matches</button>
+  <button type="button" class="tab-btn" data-filter="LIVE">Live Now</button>
   <button type="button" class="tab-btn" data-filter="UPCOMING">Upcoming</button>
+  <div class="tab-indicator" id="tabIndicator" aria-hidden="true"></div>
 </div>
 
-<!-- Player (JW) -->
+<!-- Dynamic player -->
 <div id="player-wrapper">
   <div class="player-embed">
-    <div id="dynamic-player"></div>
+    <iframe id="dynamic-player" webkitAllowFullScreen mozallowfullscreen allowfullscreen frameborder="0" allow="autoplay"></iframe>
   </div>
 </div>
 
-<!-- Matches -->
-<div class="file-container" id="matches"></div>
+<div class="file-container" id="matches" role="list"></div>
 
 <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
-
 <script>
-// 🔥 Don't touch proxy, you wanted same
+const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+const container = document.getElementById('matches');
+const playerWrapper = document.getElementById('player-wrapper');
+const playerIframe = document.getElementById('dynamic-player');
 const proxyBaseURL = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/ios=';
 
-// 🔥 Fancode source
-const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
-
-// Variables
 let allMatches = [];
 let currentFilter = 'all';
 let activeStreamLink = null;
-let jwPlayerInstance = null;
 
-// Extract workable link
 function getStreamLink(match){
+  if(!match) return null;
   if(match.dai_url) return match.dai_url;
   if(match.url) return match.url;
-  if(match.stream?.url) return match.stream.url;
+  if(match.stream && match.stream.url) return match.stream.url;
   return null;
 }
 
-// Render cards
 function renderMatches(){
-  const container = document.getElementById("matches");
-  container.innerHTML = "";
-
-  let filtered = currentFilter === "all" ? allMatches :
-    allMatches.filter(m => (m.status||'').toUpperCase() === currentFilter);
+  container.innerHTML = '';
+  let filtered = allMatches;
+  if(currentFilter !== 'all') filtered = allMatches.filter(m => (m.status || '').toUpperCase() === currentFilter);
+  if(!filtered.length){
+    container.innerHTML = `<div class="col-span-full text-center py-10"><div style="font-size:48px; opacity:0.6;">😕</div><h3 style="margin:8px 0;">No matches found</h3><p style="opacity:0.7">Try a different filter</p></div>`;
+    return;
+  }
 
   filtered.forEach(match => {
-    const div = document.createElement("div");
-    div.className = "match-item";
+    const div = document.createElement('div');
+    div.className = 'match-item';
+    div.tabIndex = 0;
 
-    const img = match.src || "https://via.placeholder.com/400x225?text=No+Image";
-    const status = (match.status || "N/A").toUpperCase();
+    const imgUrl = match.src || 'https://via.placeholder.com/400x225?text=No+Image';
+    const status = (match.status || '').toUpperCase();
+    const statusClass = status === 'LIVE' ? '' : 'upcoming';
     const hasStream = !!getStreamLink(match);
+    const startTimeDisplay = (match.startTime || match.start_date) ? `<p style="margin:6px 0 0; font-size:0.92rem; color:#ddd">Start: ${match.startTime || match.start_date}</p>` : '';
 
     div.innerHTML = `
-      <span class="badge badge-category">${match.event_category||'Match'}</span>
-      <span class="badge badge-status">${status}</span>
-      <img src="${img}" />
+      <span class="badge badge-category">${match.event_category || 'Other'}</span>
+      <span class="badge badge-status ${statusClass}">${status || 'N/A'}</span>
+      <img src="${imgUrl}" alt="${(match.title||'Match').replace(/"/g,'')}" />
       <div class="match-details">
-        <h3>${match.title||"Match"}</h3>
-        <button class="stream-button ${hasStream?'':'disabled'}">
-          ${status==="LIVE"&&hasStream?'<span class="live-dot"></span>':''}
-          ${hasStream?'Watch Now':'No Stream'}
-        </button>
+        <h3>${match.title || 'Match Title'}</h3>
+        <div class="match-time-button">
+          ${startTimeDisplay}
+          <button type="button" class="stream-button ${hasStream ? '' : 'disabled'}" ${hasStream ? '' : 'disabled'}>
+            ${status === 'LIVE' && hasStream ? '<div class="live-dot" aria-hidden="true"></div>' : ''}
+            ${hasStream ? 'Watch Now' : 'No Stream'}
+          </button>
+        </div>
       </div>
     `;
 
-    // Play click
-    div.onclick = ()=>{
-      if(!hasStream) return;
-      playJW(match);
-    };
+    const matchLink = getStreamLink(match);
+    if(matchLink && activeStreamLink && matchLink === activeStreamLink) div.classList.add('active');
+
+    function playMatch(){
+      if(!matchLink) return;
+
+      // 🔴 OLD:
+      // playerIframe.src = proxyBaseURL + encodeURIComponent(matchLink);
+
+      // ✅ NEW: load your JW player page and pass original stream in query
+      playerIframe.src = 'player.html?stream=' + encodeURIComponent(matchLink);
+
+      playerWrapper.style.display = 'block';
+      playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelectorAll('.match-item.active').forEach(el => el.classList.remove('active'));
+      div.classList.add('active');
+      activeStreamLink = matchLink;
+    }
+
+    div.addEventListener('click', playMatch);
+
+    const btn = div.querySelector('.stream-button');
+    if(btn){
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if(btn.classList.contains('disabled')) return;
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        r.style.width = r.style.height = size + 'px';
+        r.style.left = (e.clientX - rect.left - size/2) + 'px';
+        r.style.top = (e.clientY - rect.top - size/2) + 'px';
+        btn.appendChild(r);
+        setTimeout(()=> r.remove(), 650);
+        playMatch();
+      });
+    }
 
     container.appendChild(div);
   });
 }
 
-// JW Player logic
-function playJW(match){
-  const link = getStreamLink(match);
-  if(!link) return;
-
-  // JW needs DIRECT stream → DO NOT modify proxyBaseURL
-  const streamUrl = link;
-
-  document.getElementById("player-wrapper").style.display = "block";
-
-  if(!jwPlayerInstance){
-    jwPlayerInstance = jwplayer("dynamic-player").setup({
-      file: streamUrl,
-      autostart: true,
-      hlshtml: true,
-      width: "100%",
-      height: "100%",
-      primary: "html5",
-      controls: true,
-
-      // DVR seek (live rewind)
-      liveSyncDuration: 30,
-      dvrSeekLimit: 1800,
-      playbackRateControls: true
-    });
-
-    jwPlayerInstance.on("error", e=>{
-      console.log("JW Error:",e);
-    });
-
-  } else {
-    jwPlayerInstance.load([{ file: streamUrl }]);
-    jwPlayerInstance.play(true);
-  }
-
-  document.getElementById("player-wrapper").scrollIntoView({behavior:"smooth"});
-}
-
-// Fetch live data
-async function fetchMatches(){
-  const resp = await fetch(apiURL);
-  const data = await resp.json();
-  allMatches = data.matches;
-  renderMatches();
-}
-
-// Tabs behavior
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
-    btn.classList.add("active");
-    currentFilter = btn.dataset.filter;
+async function fetchAndRender(){
+  try{
+    const resp = await fetch(apiURL, { cache: 'no-cache' });
+    const data = await resp.json();
+    allMatches = data.matches || [];
     renderMatches();
-  };
+  }catch(err){
+    console.error(err);
+    container.innerHTML = `<div style="padding:24px;">Failed to fetch live matches.</div>`;
+  }
+}
+
+/* Tabs behaviour */
+const tabsContainer = document.getElementById('tabs');
+const tabButtons = Array.from(tabsContainer.querySelectorAll('.tab-btn'));
+const tabIndicator = document.getElementById('tabIndicator');
+
+function setIndicatorTo(button, instant = false){
+  if(!button) { tabIndicator.style.opacity = '0'; return; }
+  const containerRect = tabsContainer.getBoundingClientRect();
+  const btnRect = button.getBoundingClientRect();
+  const left = btnRect.left - containerRect.left;
+  const width = btnRect.width;
+  tabIndicator.style.opacity = '1';
+  if(instant){
+    tabIndicator.style.transition = 'none';
+    tabIndicator.style.left = left + 'px';
+    tabIndicator.style.width = width + 'px';
+    requestAnimationFrame(()=> tabIndicator.style.transition = '');
+  } else {
+    tabIndicator.style.left = left + 'px';
+    tabIndicator.style.width = width + 'px';
+  }
+}
+
+function activateTabButton(button){
+  tabButtons.forEach(b => b.classList.remove('active'));
+  button.classList.add('active');
+  setIndicatorTo(button);
+}
+
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(()=> ripple.remove(), 650);
+
+    currentFilter = btn.dataset.filter || 'all';
+    activateTabButton(btn);
+    renderMatches();
+  });
 });
 
-// Load
-fetchMatches();
-setInterval(fetchMatches,180000);
+window.addEventListener('load', () => {
+  const initial = tabsContainer.querySelector('.tab-btn.active') || tabButtons[0];
+  setTimeout(()=> setIndicatorTo(initial, true), 30);
+});
 
+window.addEventListener('resize', () => {
+  const active = tabsContainer.querySelector('.tab-btn.active') || tabButtons[0];
+  setIndicatorTo(active, true);
+});
+
+fetchAndRender();
+setInterval(fetchAndRender, 180000); // refresh every 3 mins
 </script>
 
 </body>
