@@ -44,6 +44,44 @@
       background-size: cover;
       z-index: -1;
     }
+
+    /* Disclaimer styles */
+    .disclaimer-button {
+      width: 100%;
+      background-color: #ff9800;
+      color: white;
+      padding: 10px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+    .disclaimer-box {
+      display: none;
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 20px;
+      position: relative;
+      border-bottom: 2px solid #ff9800;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .disclaimer-box a {
+      color: #0077ff;
+      text-decoration: underline;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #856404;
+    }
     
     .header {
       text-align: center;
@@ -134,10 +172,10 @@
       color: white;
     }
 
-    /* iframe player (cropped so bottom text bar is hidden) */
+    /* iframe player — crop + overlay to hide purple text, no vertical move */
     #player-wrapper {
       max-width: 90%;
-      margin: 10px auto 25px auto;
+      margin: 10px auto 25px auto; /* back to original */
       display: none;
     }
     #player-wrapper .player-embed {
@@ -145,17 +183,27 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       border-radius: 16px;
-      overflow: hidden;   /* important: crop iframe */
+      overflow: hidden;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
       background: #000;
     }
     #player-wrapper iframe {
       width: 100%;
-      height: 115%;       /* make iframe taller */
+      height: 170%;      /* show more than container */
       border: none;
       position: absolute;
-      top: -7%;           /* shift up so bottom 7% (purple text) is outside */
+      top: -35%;         /* shift up: bottom 35% (where text lives) is outside */
       left: 0;
+    }
+    #player-wrapper .player-embed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 25%;       /* extra safety cover at bottom */
+      background: linear-gradient(to top, #0f172a 0%, rgba(15,23,42,0) 100%);
+      pointer-events: none;
     }
     
     #matches {
@@ -342,6 +390,20 @@
   </style>
 </head>
 <body>
+
+  <!-- Disclaimer -->
+  <button class="disclaimer-button" onclick="showDisclaimer()">Must Read Disclaimer and Instructions</button>
+  <div class="disclaimer-box" id="disclaimerBox">
+    <button class="close-btn" onclick="closeDisclaimer()">×</button>
+    <p><strong>Disclaimer and Instructions:</strong><br>
+      This SonyLiv web page is completely <strong>free</strong> to use. <strong>You do not need to pay</strong> any money to anyone for access.<br><br>
+      If someone has asked you for money or taken money in exchange for providing this page, <strong>you have been scammed</strong>.<br><br>
+      Please report such cases here: 
+      <a href="https://instagram.com/_l__a__k__s__h__m__a__n_" target="_blank">LAKSHMAN REDDY</a><br><br>
+      To play in Full Screen - Just <strong>Double Tap</strong> on the player (for both mobile and pc users)
+    </p>
+  </div>
+
   <div class="header">
     <h1>SonyLiv Live Events <span class="live-badge">LIVE</span></h1>
   </div>
@@ -373,6 +435,14 @@
   </div>
 
   <script>
+    // Disclaimer functions
+    function showDisclaimer() {
+      document.getElementById('disclaimerBox').style.display = 'block';
+    }
+    function closeDisclaimer() {
+      document.getElementById('disclaimerBox').style.display = 'none';
+    }
+
     let allMatches = [];
 
     const playerWrapper = document.getElementById("player-wrapper");
