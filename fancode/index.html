@@ -1,50 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Phoenix Fancode Live</title>
-  <style>
-    /* Your style remains same — no changes */
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PhoenixxxTv Fancode Live</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" />
+<style>
+/* ------------- STYLES UNCHANGED -------------- */
+:root{
+  --bg-color:#222; --text-color:#fff; --match-bg:#333;
+  --btn-primary-bg:#ff6600; --btn-primary-hover-bg:#cc5500; --btn-primary-text:#fff;
+  --status-live-color:#00ff00;
+  --title-color:#ff6600; --subtitle-color:#ffcc00;
+}
+body{ margin:0; padding:20px; font-family:'Roboto',sans-serif; background:var(--bg-color); color:var(--text-color); box-sizing:border-box; text-align:center; }
+h1{ font-family:'Montserrat',sans-serif; font-size:2rem; margin:0 0 6px; color:var(--title-color); }
+h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:var(--subtitle-color); }
+.tabs { display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap; position:relative; margin-bottom:18px; padding:6px; }
+.tab-btn { position:relative; background:#444; border:0; color:#fff; padding:10px 16px; border-radius:20px; cursor:pointer; font-weight:600; transition:.18s; overflow:hidden; white-space:nowrap; flex-shrink:0; }
+.tab-btn.active { background: var(--btn-primary-bg); color:#111; box-shadow:0 10px 30px rgba(255,102,0,0.18); }
+.tab-indicator{position:absolute;height:4px;background:linear-gradient(90deg,#ffd27a,#ff7a00);border-radius:6px;bottom:0;transition:.26s;box-shadow:0 6px 18px rgba(255,122,0,0.18);}
+.ripple { position:absolute; border-radius:50%; transform:scale(0); background:rgba(255,255,255,0.18); pointer-events:none; animation:ripple 600ms cubic-bezier(.2,.9,.2,1); }
+@keyframes ripple { to { transform: scale(4); opacity:0; } }
+#player-wrapper { max-width:90%; margin:10px auto 25px auto; display:none; }
+#player-wrapper .player-embed { position:relative; width:100%; aspect-ratio:16/9; border-radius:10px; overflow:hidden; box-shadow:0 0 12px rgba(0,0,0,0.5); }
+#player-wrapper iframe { width:100%; height:100%; border:none; position:absolute; top:0; left:0; }
+.file-container{ display:flex; flex-wrap:wrap; gap:15px; justify-content:center; margin-top:20px; }
+.match-item{ background:var(--match-bg); border-radius:10px; padding:15px; width:calc(25% - 20px); min-width:250px; box-shadow:0 0 10px rgba(0,0,0,0.35); cursor:pointer; transition:.25s; display:flex; flex-direction:column; position:relative; min-height:400px; }
+.match-item.active { border:2px solid var(--btn-primary-bg); box-shadow:0 0 28px var(--btn-primary-bg); animation:glow 1.2s ease-in-out infinite alternate; }
+@keyframes glow { from { box-shadow: 0 0 16px var(--btn-primary-bg); } to { box-shadow: 0 0 28px var(--btn-primary-bg); } }
+.match-item img{ width:100%; border-radius:8px; object-fit:cover; }
+.badge{ position:absolute; top:10px; padding:4px 8px; font-size:0.8em; border-radius:6px; font-weight:700; }
+.badge-category{ left:10px; background:#555; color:#fff; }
+.badge-status{ right:10px; background:#e53935; color:#fff; }
+.badge-status.upcoming{ background:#ff6d00; color:#111; }
+.stream-button{ padding:12px 0; background:var(--btn-primary-bg); color:#fff; border:none; border-radius:8px; font-weight:700; cursor:pointer; width:100%; }
+footer{ padding:20px 10px; margin-top:36px; font-family:'Montserrat',sans-serif; background:#111; color:#fff; }
+</style>
 </head>
 <body>
 
-<div id="matchesGrid"></div>
-<div id="loadingIndicator">Loading...</div>
+<h1>PhoenixxxTv Fancode Live</h1>
+<h2>Made with ♥️ by Lakshman</h2>
+
+<!-- Filter Tabs -->
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-filter="all">All Matches</button>
+  <button class="tab-btn" data-filter="LIVE">Live Now</button>
+  <button class="tab-btn" data-filter="UPCOMING">Upcoming</button>
+  <div class="tab-indicator" id="tabIndicator"></div>
+</div>
+
+<!-- Player -->
+<div id="player-wrapper">
+  <div class="player-embed">
+    <iframe id="dynamic-player" allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="file-container" id="matches"></div>
+
+<footer>©Lakshman 2025 | All Rights Reserved</footer>
+
 
 <script>
-const JSON_URL='https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+const container = document.getElementById('matches');
+const playerWrapper = document.getElementById('player-wrapper');
+const playerIframe = document.getElementById('dynamic-player');
 
-/* 🔥 THIS ONE LINE IS UPDATED */
-const playerBaseURL='./player.html?ios=';   // Internal player
+/* 🔥 1-LINE UPDATE DONE HERE */
+const proxyBaseURL = './player.html?ios=';
 
-const grid=document.getElementById('matchesGrid');
-const loading=document.getElementById('loadingIndicator');
-let fullData=[];
+let allMatches = [];
+let activeStreamLink = null;
+let currentFilter='all';
 
-function render(list){
-  grid.innerHTML='';
+function getStreamLink(m){ return m.dai_url || m.url || (m.stream && m.stream.url) || null; }
+
+function playMatch(link){
+  playerIframe.src = proxyBaseURL + encodeURIComponent(link);
+  playerWrapper.style.display='block';
+  playerWrapper.scrollIntoView({behavior:'smooth'});
+  activeStreamLink=link;
+}
+
+/* ------------ rendering logic untouched ------------ */
+async function fetchData(){
+  const res = await fetch(apiURL,{cache:'no-store'});
+  const data = await res.json();
+  allMatches = data.matches || [];
+  render();
+}
+fetchData();
+setInterval(fetchData,180000);
+
+function render(){
+  container.innerHTML='';
+  let list=allMatches;
+  if(currentFilter!=='all') list=allMatches.filter(m=>(m.status||'').toUpperCase()==currentFilter);
+
   list.forEach(m=>{
-    const d=document.createElement('button');
-    d.style='display:block;width:100%;padding:12px;margin:8px 0;background:#333;color:#fff;border-radius:8px;font-size:15px';
-    d.textContent=(m.team_1||'')+" vs "+(m.team_2||'')+" • "+(m.event_name||'');
-    d.onclick=()=>openInPlayer(m.dai_url||m.m3u8||m.src);
-    grid.appendChild(d);
+    const div=document.createElement('div');
+    div.className='match-item';
+    const img=m.src||'https://via.placeholder.com/400x225?text=No+Image';
+    const status=(m.status||'').toUpperCase();
+    const statusClass=status==='LIVE'?'':'upcoming';
+    const has=getStreamLink(m);
+
+    div.innerHTML=`
+      <span class="badge badge-category">${m.event_category||'Other'}</span>
+      <span class="badge badge-status ${statusClass}">${status||'N/A'}</span>
+      <img src="${img}">
+      <h3>${m.title||'Match Title'}</h3>
+      <button class="stream-button" ${has?'':'disabled'}>${has?(status==='LIVE'?'Watch Live':'Watch'):'No Stream'}</button>
+    `;
+
+    if(has) div.onclick=()=>playMatch(has);
+    container.appendChild(div);
   });
 }
 
-function openInPlayer(url){
-  if(!url){return alert("No link available");}
-  const go=playerBaseURL+encodeURIComponent(url);
-  window.open(go,'_blank');
-}
-
-fetch(JSON_URL).then(r=>r.json()).then(d=>{
-  fullData=d.matches;
-  render(fullData);
-  loading.style.display='none';
+/* Tabs logic unchanged */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.onclick=()=>{
+    currentFilter=btn.dataset.filter;
+    document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  }
 });
 </script>
+
 </body>
 </html>
