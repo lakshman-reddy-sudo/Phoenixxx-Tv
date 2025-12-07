@@ -134,7 +134,7 @@
       color: white;
     }
 
-    /* iframe player */
+    /* iframe player (cropped so bottom text bar is hidden) */
     #player-wrapper {
       max-width: 90%;
       margin: 10px auto 25px auto;
@@ -145,16 +145,16 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       border-radius: 16px;
-      overflow: hidden;
+      overflow: hidden;   /* important: crop iframe */
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
       background: #000;
     }
     #player-wrapper iframe {
       width: 100%;
-      height: 100%;
+      height: 115%;       /* make iframe taller */
       border: none;
       position: absolute;
-      top: 0;
+      top: -7%;           /* shift up so bottom 7% (purple text) is outside */
       left: 0;
     }
     
@@ -315,7 +315,6 @@
       to { transform: rotate(360deg); }
     }
     
-    /* Responsive styles */
     @media (max-width: 768px) {
       #matches {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -379,21 +378,24 @@
     const playerWrapper = document.getElementById("player-wrapper");
     const playerIframe = document.getElementById("dynamic-player");
 
-    // OUTER PLAYER (allinonereborn.online)
+    // OUTER PLAYER
     const outerPlayerBase = "https://allinonereborn.online/events/player.html?url=";
-    // INNER PROXY (mini.allinonereborn.fun)
+    // INNER PROXY
     const innerProxyBase = "https://mini.allinonereborn.fun/events/stream_proxy.php?url=";
     
     async function loadMatches() {
       try {
-        const res = await fetch("https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json", { cache: "no-store" });
+        const res = await fetch(
+          "https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json",
+          { cache: "no-store" }
+        );
         const data = await res.json();
         const container = document.getElementById("matches");
         container.innerHTML = "";
         
-        allMatches = data.matches;
+        allMatches = data.matches || [];
 
-        filterMatches('all');
+        filterMatches("all");
       } catch (error) {
         document.getElementById("matches").innerHTML = `
           <div class="loading">
@@ -410,15 +412,15 @@
       
       let filteredMatches = [];
       
-      if (filter === 'all') {
+      if (filter === "all") {
         filteredMatches = allMatches;
-      } else if (filter === 'live') {
+      } else if (filter === "live") {
         filteredMatches = allMatches.filter(match => match.isLive);
-      } else if (filter === 'upcoming') {
+      } else if (filter === "upcoming") {
         filteredMatches = allMatches.filter(match => !match.isLive);
       }
       
-      if (filteredMatches.length === 0) {
+      if (!filteredMatches.length) {
         container.innerHTML = `
           <div class="loading">
             <i class="fas fa-info-circle"></i> No ${filter} matches found.
@@ -432,15 +434,15 @@
         card.className = "card";
         card.style.animationDelay = `${index * 0.1}s`;
 
-        const safeTitle = (match.event_name || "Event").replace(/"/g, '');
-        const safeMatch = (match.match_name || "Upcoming Match").replace(/"/g, '');
+        const safeTitle = (match.event_name || "Event").replace(/"/g, "");
+        const safeMatch = (match.match_name || "Upcoming Match").replace(/"/g, "");
 
         card.innerHTML = `
           <div class="card-img-container">
             <img src="${match.src}" alt="${safeMatch}">
             <div class="card-overlay">
               <button ${match.isLive ? `onclick="openPlayer('${match.video_url}', event)"` : "disabled"}>
-                ${match.isLive ? '<i class="fas fa-play"></i> Watch Live' : 'Upcoming'}
+                ${match.isLive ? '<i class="fas fa-play"></i> Watch Live' : "Upcoming"}
               </button>
             </div>
           </div>
@@ -450,9 +452,9 @@
             <p><i class="fas fa-tv"></i> ${match.broadcast_channel}</p>
             <p><i class="fas fa-language"></i> ${match.audioLanguageName}</p>
             <div class="match-info">
-              <span>${match.isLive ? '<span class="live-badge">LIVE NOW</span>' : 'Starting soon'}</span>
+              <span>${match.isLive ? '<span class="live-badge">LIVE NOW</span>' : "Starting soon"}</span>
               <button ${match.isLive ? `onclick="openPlayer('${match.video_url}', event)"` : "disabled"}>
-                ${match.isLive ? '<i class="fas fa-play"></i> Watch' : 'Upcoming'}
+                ${match.isLive ? '<i class="fas fa-play"></i> Watch' : "Upcoming"}
               </button>
             </div>
           </div>
@@ -475,29 +477,29 @@
 
       const button = ev && ev.currentTarget;
       if (button) {
-        button.classList.add('clicked');
+        button.classList.add("clicked");
         setTimeout(() => {
-          button.classList.remove('clicked');
+          button.classList.remove("clicked");
         }, 300);
       }
     }
 
     // Filters
-    document.querySelectorAll('.filter-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
+    document.querySelectorAll(".filter-btn").forEach(button => {
+      button.addEventListener("click", function () {
+        document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+        this.classList.add("active");
         
-        const filter = this.getAttribute('data-filter');
+        const filter = this.getAttribute("data-filter");
         filterMatches(filter);
         
-        const matches = document.getElementById('matches');
-        matches.style.opacity = '0';
-        matches.style.transform = 'translateY(20px)';
+        const matches = document.getElementById("matches");
+        matches.style.opacity = "0";
+        matches.style.transform = "translateY(20px)";
         
         setTimeout(() => {
-          matches.style.opacity = '1';
-          matches.style.transform = 'translateY(0)';
+          matches.style.opacity = "1";
+          matches.style.transform = "translateY(0)";
         }, 300);
       });
     });
@@ -508,23 +510,23 @@
   <!-- Block redirects / devtools / right-click -->
   <script>
   // Disable right-click
-  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener("contextmenu", e => e.preventDefault());
 
   // Block common devtools key combos
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener("keydown", function(e) {
     const key = e.key || e.keyIdentifier || String.fromCharCode(e.keyCode);
-    if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
-    if (e.ctrlKey && e.shiftKey && ['I','C','J'].includes((key+'').toUpperCase())) {
+    if (e.key === "F12") { e.preventDefault(); e.stopPropagation(); return false; }
+    if (e.ctrlKey && e.shiftKey && ["I","C","J"].includes((key+"").toUpperCase())) {
       e.preventDefault(); e.stopPropagation(); return false;
     }
-    if (e.ctrlKey && ['u','s'].includes((key+'').toLowerCase())) {
+    if (e.ctrlKey && ["u","s"].includes((key+"").toLowerCase())) {
       e.preventDefault(); e.stopPropagation(); return false;
     }
   });
 
   // Kill window.open popups from this page
   window.open = function() {
-    console.warn('Blocked window.open call.');
+    console.warn("Blocked window.open call.");
     return null;
   };
 
@@ -538,14 +540,14 @@
       if (widthDiff > threshold || heightDiff > threshold) {
         if (!devtoolsOpen) {
           devtoolsOpen = true;
-          document.documentElement.style.filter = 'blur(6px)';
-          console.warn('DevTools detected — content blurred.');
+          document.documentElement.style.filter = "blur(6px)";
+          console.warn("DevTools detected — content blurred.");
         }
       } else {
         if (devtoolsOpen) {
           devtoolsOpen = false;
-          document.documentElement.style.filter = '';
-          console.info('DevTools closed.');
+          document.documentElement.style.filter = "";
+          console.info("DevTools closed.");
         }
       }
     }, 800);
