@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FREE LIVE PLAYER : BY SAYAN OAI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="referrer" content="no-referrer">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
+
+  <style>
+    :root { --accent:#ff0033; --white:#fff; --bg:#000; }
+    html,body{margin:0;height:100%;background:var(--bg);font-family:Inter,system-ui,sans-serif;color:var(--white);overflow:hidden;}
+    .wrap{height:100vh;display:flex;align-items:flex-start;justify-content:center;background:#000;padding-top:35px;}
+    .player-container{width:95%;height:85vh;border-radius:12px;overflow:hidden;}
+    video#player{width:100%;height:100%;object-fit:contain;background:#000;border-radius:12px;}
+    .live-badge{position:absolute;top:12px;right:14px;background:var(--accent);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700;font-size:13px;animation:glow 1.5s infinite;}
+    @keyframes glow{0%{box-shadow:0 0 10px red;}50%{box-shadow:0 0 25px red;}100%{box-shadow:0 0 10px red;}}
+    :root{--plyr-color-main:var(--accent);}
+    .plyr__controls{background:rgba(0,0,0,0.25);backdrop-filter:blur(5px);}
+    .error{padding:10px;text-align:center;background:#111;color:#ffb;}
+    .popup-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999;}
+    .popup{background:#181818;border-radius:12px;padding:20px;width:min(90%,360px);text-align:center;}
+    .popup button{width:100%;padding:12px;margin-top:10px;border-radius:8px;cursor:pointer;font-weight:700;font-size:15px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="player-container">
+      <video id="player" controls autoplay playsinline muted></video>
+      <div class="live-badge">LIVE</div>
+      <div id="error" class="error" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- Popup -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup"><h2>Support Us 💖</h2>
+      <button id="joinBtn" style="background:linear-gradient(45deg,#ff0099,#00eeff);color:white;">Join WhatsApp</button>
+      <button id="closePopup" style="background:#333;color:white;">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js"></script>
+
+  <script>
+  (function(){
+    const v=document.getElementById("player");
+    const err=document.getElementById("error");
+    const popup=document.getElementById("popup");
+    document.getElementById("joinBtn").onclick=()=>open("https://whatsapp.com/channel/0029VaeylYYBPzjVNomWuZ0T","_blank");
+    document.getElementById("closePopup").onclick=()=>popup.style.display="none";
+    setTimeout(()=>popup.style.display="none",60000);
+
+    const p=new URLSearchParams(location.search).get("ios");
+    if(!p){err.style.display="block";err.textContent="No stream found";v.style.display="none";return;}
+
+    if(Hls.isSupported()){
+      const h=new Hls();
+      h.loadSource(p);
+      h.attachMedia(v);
+      h.on(Hls.Events.MANIFEST_PARSED,()=>{new Plyr(v,{controls:['play','progress','mute','volume','fullscreen']})});
+    }else{
+      v.src=p;
+      new Plyr(v);
+    }
+  })();
+  </script>
+</body>
+</html>
