@@ -37,6 +37,36 @@ h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:
 .stream-button{ padding:12px 0; background:var(--btn-primary-bg); color:var(--btn-primary-text); border:none; border-radius:8px; font-weight:700; cursor:pointer; width:100%; }
 .stream-button[disabled]{ background:#555; color:#aaa; cursor:not-allowed; }
 footer{ padding:20px 10px; margin-top:36px; font-family:'Montserrat',sans-serif; background:#111; color:#fff; }
+
+/* --------- Disclaimer styles from second code ---------- */
+.disclaimer-button {
+  width: 100%;
+  background-color: #ff9800;
+  color: white;
+  padding: 10px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+.disclaimer-box {
+  display: none;
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 20px;
+  position: relative;
+  border-bottom: 2px solid #ff9800;
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #856404;
+}
 </style>
 </head>
 <body>
@@ -50,6 +80,7 @@ footer{ padding:20px 10px; margin-top:36px; font-family:'Montserrat',sans-serif;
     Please report such cases here: <a href="https://instagram.com/_l__a__k__s__h__m__a__n_" target="_blank" style="color:blue;">LAKSHMAN REDDY</a>
   </p>
 </div>
+
 <h1>PhoenixxxTv Fancode Live</h1>
 <h2>Made with ♥️ by Lakshman</h2>
 
@@ -74,6 +105,14 @@ footer{ padding:20px 10px; margin-top:36px; font-family:'Montserrat',sans-serif;
 
 
 <script>
+// ---------- Disclaimer functions ----------
+function showDisclaimer() {
+  document.getElementById('disclaimerBox').style.display = 'block';
+}
+function closeDisclaimer() {
+  document.getElementById('disclaimerBox').style.display = 'none';
+}
+
 const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
 const container = document.getElementById('matches');
 const playerWrapper = document.getElementById('player-wrapper');
@@ -166,6 +205,51 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     render();
   });
 });
+</script>
+
+<!-- Extra protection / devtools blocker from second code -->
+<script>
+// Disable right-click
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// Block common devtools key combos
+document.addEventListener('keydown', function(e) {
+  const key = e.key || e.keyIdentifier || String.fromCharCode(e.keyCode);
+  // F12
+  if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+  // Ctrl+Shift+I / Ctrl+Shift+C / Ctrl+Shift+J
+  if (e.ctrlKey && e.shiftKey && ['I','C','J'].includes((key+'').toUpperCase())) {
+    e.preventDefault(); e.stopPropagation(); return false;
+  }
+  // Ctrl+U (view-source), Ctrl+S (save), Ctrl+Shift+S
+  if (e.ctrlKey && ['u','s'].includes((key+'').toLowerCase())) {
+    e.preventDefault(); e.stopPropagation(); return false;
+  }
+});
+
+// Very simple devtools detector (heuristic)
+(function(){
+  let devtoolsOpen = false;
+  const threshold = 160; // adjust if needed
+  setInterval(() => {
+    const widthDiff = window.outerWidth - window.innerWidth;
+    const heightDiff = window.outerHeight - window.innerHeight;
+    if (widthDiff > threshold || heightDiff > threshold) {
+      if (!devtoolsOpen) {
+        devtoolsOpen = true;
+        // an action to discourage: hide content or show stern message
+        document.documentElement.style.filter = 'blur(6px)';
+        console.warn('DevTools detected — content blurred.');
+      }
+    } else {
+      if (devtoolsOpen) {
+        devtoolsOpen = false;
+        document.documentElement.style.filter = '';
+        console.info('DevTools closed.');
+      }
+    }
+  }, 800);
+})();
 </script>
 
 </body>
