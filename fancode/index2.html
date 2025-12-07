@@ -145,16 +145,16 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       border-radius: 16px;
-      overflow: hidden;   /* important: crop iframe */
+      overflow: hidden;   /* crop iframe */
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
       background: #000;
     }
     #player-wrapper iframe {
       width: 100%;
-      height: 115%;       /* make iframe taller */
+      height: 115%;       /* desktop: small crop */
       border: none;
       position: absolute;
-      top: -7%;           /* shift up so bottom 7% (purple text) is outside */
+      top: -7%;
       left: 0;
     }
     
@@ -315,6 +315,7 @@
       to { transform: rotate(360deg); }
     }
     
+    /* Tablet & mobile layout for cards */
     @media (max-width: 768px) {
       #matches {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -322,6 +323,12 @@
       
       .header h1 {
         font-size: 2.2rem;
+      }
+
+      /* 🔥 Stronger crop on mobile so purple text is fully hidden */
+      #player-wrapper iframe {
+        height: 140%;   /* taller */
+        top: -18%;      /* pushed further up */
       }
     }
     
@@ -509,10 +516,8 @@
 
   <!-- Block redirects / devtools / right-click -->
   <script>
-  // Disable right-click
   document.addEventListener("contextmenu", e => e.preventDefault());
 
-  // Block common devtools key combos
   document.addEventListener("keydown", function(e) {
     const key = e.key || e.keyIdentifier || String.fromCharCode(e.keyCode);
     if (e.key === "F12") { e.preventDefault(); e.stopPropagation(); return false; }
@@ -524,13 +529,11 @@
     }
   });
 
-  // Kill window.open popups from this page
   window.open = function() {
     console.warn("Blocked window.open call.");
     return null;
   };
 
-  // Simple devtools detector
   (function(){
     let devtoolsOpen = false;
     const threshold = 160;
