@@ -134,7 +134,7 @@
       color: white;
     }
 
-    /* iframe player (cropped so bottom text bar is hidden) */
+    /* iframe player (hard crop so bottom text is never visible, desktop & mobile) */
     #player-wrapper {
       max-width: 90%;
       margin: 10px auto 25px auto;
@@ -151,10 +151,10 @@
     }
     #player-wrapper iframe {
       width: 100%;
-      height: 115%;       /* desktop: small crop */
+      height: 140%;       /* BIGGER frame */
       border: none;
       position: absolute;
-      top: -7%;
+      top: -20%;          /* push up so bottom 20% (where purple text is) is outside */
       left: 0;
     }
     
@@ -315,7 +315,6 @@
       to { transform: rotate(360deg); }
     }
     
-    /* Tablet & mobile layout for cards */
     @media (max-width: 768px) {
       #matches {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -323,12 +322,6 @@
       
       .header h1 {
         font-size: 2.2rem;
-      }
-
-      /* 🔥 Stronger crop on mobile so purple text is fully hidden */
-      #player-wrapper iframe {
-        height: 140%;   /* taller */
-        top: -18%;      /* pushed further up */
       }
     }
     
