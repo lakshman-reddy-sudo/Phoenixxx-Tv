@@ -18,13 +18,13 @@ body{ margin:0; padding:20px; font-family:'Roboto',sans-serif; background:var(--
 h1{ font-family:'Montserrat',sans-serif; font-size:2rem; margin:0 0 6px; color:var(--title-color); }
 h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:var(--subtitle-color); }
 
-/* Tabs + animated indicator */
+/* Tabs + animated indicator - fixed for mobile */
 .tabs {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* allow wrapping on very small screens */
   position: relative;
   margin-bottom: 18px;
   padding: 6px;
@@ -43,20 +43,21 @@ h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:
   font-weight: 600;
   transition: transform 180ms cubic-bezier(.2,.9,.2,1), background 220ms, box-shadow 220ms;
   overflow: hidden;
-  white-space: nowrap;
-  flex-shrink: 0;
+  white-space: nowrap; /* prevent breaking text */
+  flex-shrink: 0; /* prevent shrinking in small screens */
 }
 
 .tab-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 8px 22px rgba(0,0,0,0.4); }
 .tab-btn:active { transform: scale(0.99); }
 .tab-btn.active { background: var(--btn-primary-bg); color: #111; transform: translateY(-2px) scale(1.04); box-shadow: 0 10px 30px rgba(255,102,0,0.18); }
 
+/* moving underline indicator - properly aligned under buttons */
 .tab-indicator {
   position: absolute;
   height: 4px;
   background: linear-gradient(90deg, #ffd27a, #ff7a00);
   border-radius: 6px;
-  bottom: 0;
+  bottom: 0; /* properly placed */
   transition: left 260ms cubic-bezier(.2,.9,.2,1), width 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms;
   box-shadow: 0 6px 18px rgba(255,122,0,0.18);
   will-change: left, width;
@@ -66,7 +67,7 @@ h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:
 .ripple { position:absolute; border-radius:50%; transform:scale(0); background: rgba(255,255,255,0.18); pointer-events:none; animation: ripple 600ms cubic-bezier(.2,.9,.2,1); }
 @keyframes ripple { to { transform: scale(4); opacity:0; } }
 
-/* Dynamic player */
+/* Dynamic player - fully responsive */
 #player-wrapper {
   max-width: 90%;
   margin: 10px auto 25px auto;
@@ -75,19 +76,18 @@ h2{ font-family:'Montserrat',sans-serif; font-size:1rem; margin:0 0 18px; color:
 #player-wrapper .player-embed {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 9; /* responsive 16:9 */
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 0 12px rgba(0,0,0,0.5);
 }
-
-/* our video element */
-#live-video {
+#player-wrapper iframe {
   width: 100%;
   height: 100%;
-  background: #000;
-  border: 0;
-  outline: none;
+  border: none;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Matches grid */
@@ -139,11 +139,10 @@ footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111;
   <div class="tab-indicator" id="tabIndicator" aria-hidden="true"></div>
 </div>
 
-<!-- Dynamic player (INTERNAL, NO IFRAME) -->
+<!-- Dynamic player -->
 <div id="player-wrapper">
   <div class="player-embed">
-    <!-- this is the actual player -->
-    <video id="live-video" controls playsinline></video>
+    <iframe id="dynamic-player" webkitAllowFullScreen mozallowfullscreen allowfullscreen frameborder="0" allow="autoplay"></iframe>
   </div>
 </div>
 
@@ -151,65 +150,25 @@ footer{ width:100%; text-align:center; padding:20px 10px; background-color:#111;
 
 <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
-<!-- HLS.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
-
 <script>
 const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
 const container = document.getElementById('matches');
 const playerWrapper = document.getElementById('player-wrapper');
-const videoEl = document.getElementById('live-video');
+const playerIframe = document.getElementById('dynamic-player');
+const proxyBaseURL = 'https://my-hls-worker.lakshman-n-hlc0596.workers.dev/ios=';
 
 let allMatches = [];
 let currentFilter = 'all';
 let activeStreamLink = null;
-let hlsInstance = null;
 
-/* Prefer adfree_url, then dai_url, then url/stream.url */
 function getStreamLink(match){
   if(!match) return null;
-  if(match.adfree_url) return match.adfree_url;
-  if(match.dai_url)   return match.dai_url;
-  if(match.url)       return match.url;
+  if(match.dai_url) return match.dai_url;
+  if(match.url) return match.url;
   if(match.stream && match.stream.url) return match.stream.url;
   return null;
 }
 
-/* Load HLS stream into our internal player */
-function loadStreamIntoPlayer(streamUrl){
-  if(!streamUrl) return;
-
-  // show player
-  playerWrapper.style.display = 'block';
-
-  // destroy old instance to avoid memory leaks
-  if(hlsInstance){
-    hlsInstance.destroy();
-    hlsInstance = null;
-  }
-
-  // if browser supports MediaSource, use hls.js
-  if (window.Hls && Hls.isSupported()) {
-    hlsInstance = new Hls({
-      enableWorker: true,
-      lowLatencyMode: true,
-      backBufferLength: 120, // seconds we keep behind current time
-    });
-    hlsInstance.loadSource(streamUrl);
-    hlsInstance.attachMedia(videoEl);
-    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
-      videoEl.play().catch(()=>{});
-    });
-  } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
-    // Safari / iOS native HLS
-    videoEl.src = streamUrl;
-    videoEl.play().catch(()=>{});
-  } else {
-    alert('Your browser does not support HLS playback.');
-  }
-}
-
-/* Render match cards */
 function renderMatches(){
   container.innerHTML = '';
   let filtered = allMatches;
@@ -227,15 +186,8 @@ function renderMatches(){
     const imgUrl = match.src || 'https://via.placeholder.com/400x225?text=No+Image';
     const status = (match.status || '').toUpperCase();
     const statusClass = status === 'LIVE' ? '' : 'upcoming';
-    const streamLink = getStreamLink(match);
-    const hasStream = !!streamLink;
-    const startTimeDisplay = (match.startTime || match.start_date)
-      ? `<p style="margin:6px 0 0; font-size:0.92rem; color:#ddd">Start: ${match.startTime || match.start_date}</p>`
-      : '';
-
-    if(streamLink && activeStreamLink && streamLink === activeStreamLink) {
-      div.classList.add('active');
-    }
+    const hasStream = !!getStreamLink(match);
+    const startTimeDisplay = (match.startTime || match.start_date) ? `<p style="margin:6px 0 0; font-size:0.92rem; color:#ddd">Start: ${match.startTime || match.start_date}</p>` : '';
 
     div.innerHTML = `
       <span class="badge badge-category">${match.event_category || 'Other'}</span>
@@ -253,15 +205,17 @@ function renderMatches(){
       </div>
     `;
 
+    const matchLink = getStreamLink(match);
+    if(matchLink && activeStreamLink && matchLink === activeStreamLink) div.classList.add('active');
+
     function playMatch(){
-      if(!streamLink) return;
-      activeStreamLink = streamLink;
-      // highlight card
+      if(!matchLink) return;
+      playerIframe.src = proxyBaseURL + encodeURIComponent(matchLink);
+      playerWrapper.style.display = 'block';
+      playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
       document.querySelectorAll('.match-item.active').forEach(el => el.classList.remove('active'));
       div.classList.add('active');
-      // load into our internal player
-      loadStreamIntoPlayer(streamLink);
-      playerWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      activeStreamLink = matchLink;
     }
 
     div.addEventListener('click', playMatch);
@@ -288,7 +242,6 @@ function renderMatches(){
   });
 }
 
-/* Fetch JSON & render */
 async function fetchAndRender(){
   try{
     const resp = await fetch(apiURL, { cache: 'no-cache' });
