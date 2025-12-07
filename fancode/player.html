@@ -25,48 +25,6 @@
       height: 100%;
     }
 
-    /* Wrapper so we can position overlays */
-    .player-wrapper {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-    }
-
-    /* LIVE badge */
-    .live-badge {
-      position: absolute;
-      top: 12px;
-      left: 15px;
-      background: #ff0033;
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      z-index: 200;
-      box-shadow: 0 0 10px rgba(255,0,0,0.6);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      animation: livePulse 1.3s infinite ease-in-out;
-    }
-
-    .live-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #ffdddd;
-      box-shadow: 0 0 8px rgba(255,255,255,0.8);
-    }
-
-    @keyframes livePulse {
-      0%   { transform: translateY(0); opacity: 0.9; }
-      50%  { transform: translateY(-1px); opacity: 1; }
-      100% { transform: translateY(0); opacity: 0.9; }
-    }
-
     /* Network speed indicator */
     .speed-display {
       position: absolute;
@@ -87,11 +45,7 @@
 <body>
 
   <!-- Video Player -->
-  <div class="player-wrapper">
-    <div class="live-badge">
-      <span class="live-dot"></span>
-      LIVE
-    </div>
+  <div style="position:relative; width:100%; height:100%;">
     <video id="player" muted controls crossorigin playsinline></video>
     <div id="speedDisplay" class="speed-display"></div>
   </div>
@@ -111,7 +65,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', () => {
-      // expects ?stream=... in URL
+      // 🔹 expect ?stream=... (like CrixzyLive)
       const source = new URLSearchParams(window.location.search).get('stream');
       if (!source) {
         document.body.innerHTML = '<p style="color:white;text-align:center;margin-top:20%;">No stream link provided!</p>';
@@ -165,7 +119,7 @@
       }
     });
 
-    // Optional anti-inspection
+    // (Optional) anti-inspection – keep or delete as you want
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
       if (
