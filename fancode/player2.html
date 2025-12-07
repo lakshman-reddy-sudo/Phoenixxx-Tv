@@ -56,7 +56,7 @@
       height: 100%;
     }
     
-    /* Custom controls styling */
+    /* Controls styling */
     .plyr__controls {
       position: absolute;
       bottom: 0;
@@ -66,7 +66,7 @@
       transition: opacity 0.3s ease;
     }
 
-    /* Text Below Player */
+    /* Glow Text Below Player */
     #infoText {
       height: 10vh;
       text-align: center;
@@ -77,10 +77,8 @@
       align-items: center;
       justify-content: center;
       animation: glowBlink 2s infinite;
-      z-index: 1;
     }
 
-    /* Glow Blinking */
     @keyframes glowBlink {
       0%, 100% {
         text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 20px #ff00ff;
@@ -93,73 +91,77 @@
     }
   </style>
 </head>
-<script type='text/javascript' src='//peelwrinkle.com/37/d7/1a/37d71a290dde379f3d1016fe3009fb4b.js'></script>
+
 <body>
-  <!-- Video Player -->
   <div id="playerWrapper">
     <div id="playerContainer">
       <video id="player" playsinline controls autoplay></video>
     </div>
   </div>
 
-  <!-- Info Text -->
-  <div id="infoText">⚡ First 10 Second May be Buffer, Please Wait⚡</div>
+  <div id="infoText">⚡ First 10 Second May be Buffer, Please Wait ⚡</div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const videoUrl = urlParams.get("url");
+    const rawUrl = urlParams.get("url");
+
+    // FIXED — always go via proxy
+    const videoUrl =
+      "https://mini.allinonereborn.fun/events/stream_proxy.php?url=" +
+      encodeURIComponent(rawUrl);
+
     const video = document.getElementById("player");
     let controlsTimeout;
-    const controlsHideDelay = 3000; // 3 seconds
+    const controlsHideDelay = 3000;
 
     if (Hls.isSupported()) {
       const hls = new Hls();
+
       hls.loadSource(videoUrl);
       hls.attachMedia(video);
-      
-      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+
+      hls.on(Hls.Events.MANIFEST_PARSED, function () {
         const levels = hls.levels;
         if (levels && levels.length > 0) {
           hls.currentLevel = Math.floor(levels.length / 2);
         }
       });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = videoUrl;
     }
 
     const player = new Plyr(video, {
       autoplay: true,
       controls: [
-        'play-large', 
-        'play',
-        'progress',
-        'current-time',
-        'mute',
-        'volume',
-        'settings',
-        'pip',
-        'airplay',
-        'fullscreen'
+        "play-large",
+        "play",
+        "progress",
+        "current-time",
+        "mute",
+        "volume",
+        "settings",
+        "pip",
+        "airplay",
+        "fullscreen",
       ],
-      settings: ['quality', 'speed'],
-      hideControls: true // Let Plyr handle basic hide/show
+      settings: ["quality", "speed"],
+      hideControls: true,
     });
 
-    // Custom control visibility handler
     function showControls() {
-      const controls = document.querySelector('.plyr__controls');
+      const controls = document.querySelector(".plyr__controls");
       if (controls) {
-        controls.style.opacity = '1';
-        controls.style.pointerEvents = 'auto';
+        controls.style.opacity = "1";
+        controls.style.pointerEvents = "auto";
       }
       resetControlsTimer();
     }
 
     function hideControls() {
-      const controls = document.querySelector('.plyr__controls');
+      const controls = document.querySelector(".plyr__controls");
       if (controls && !player.paused) {
-        controls.style.opacity = '0';
-        controls.style.pointerEvents = 'none';
+        controls.style.opacity = "0";
+        controls.style.pointerEvents = "none";
       }
     }
 
@@ -168,27 +170,22 @@
       controlsTimeout = setTimeout(hideControls, controlsHideDelay);
     }
 
-    // Event listeners for controls visibility
-    player.elements.container.addEventListener('mousemove', showControls);
-    player.elements.container.addEventListener('touchstart', showControls);
-    player.elements.container.addEventListener('mouseleave', hideControls);
+    player.elements.container.addEventListener("mousemove", showControls);
+    player.elements.container.addEventListener("touchstart", showControls);
+    player.elements.container.addEventListener("mouseleave", hideControls);
 
-    // Initial setup
-    player.on('ready', () => {
-      // Start with controls visible, then hide after delay
+    player.on("ready", () => {
       showControls();
       resetControlsTimer();
     });
 
-    // Show controls when playing/pausing
-    player.on('play', showControls);
-    player.on('pause', showControls);
+    player.on("play", showControls);
+    player.on("pause", showControls);
 
-    // Prevent container resize when quality changes
-    player.on('qualitychange', event => {
-      const wrapper = document.getElementById('playerWrapper');
-      wrapper.style.width = wrapper.offsetWidth + 'px';
-      wrapper.style.height = wrapper.offsetHeight + 'px';
+    player.on("qualitychange", () => {
+      const wrapper = document.getElementById("playerWrapper");
+      wrapper.style.width = wrapper.offsetWidth + "px";
+      wrapper.style.height = wrapper.offsetHeight + "px";
     });
   </script>
 </body>
