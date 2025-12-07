@@ -172,10 +172,10 @@
       color: white;
     }
 
-    /* iframe player (strong crop so bottom text is never visible, especially on mobile) */
+    /* iframe player */
     #player-wrapper {
       max-width: 90%;
-      margin: 40px auto 25px auto; /* moved a bit down */
+      margin: 40px auto 25px auto; /* moved down a bit */
       display: none;
     }
     #player-wrapper .player-embed {
@@ -183,17 +183,28 @@
       width: 100%;
       aspect-ratio: 16 / 9;
       border-radius: 16px;
-      overflow: hidden;   /* crop iframe */
+      overflow: hidden;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
       background: #000;
     }
     #player-wrapper iframe {
       width: 100%;
-      height: 140%;       /* oversize iframe */
+      height: 100%;
       border: none;
       position: absolute;
-      top: -20%;          /* push content up (bottom text off-screen) */
+      top: 0;
       left: 0;
+    }
+    /* Overlay to hide bottom purple text */
+    #player-wrapper .player-embed::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 15%;
+      background: linear-gradient(to top, #0f172a 0%, transparent 100%);
+      pointer-events: none;
     }
     
     #matches {
@@ -361,12 +372,6 @@
       .header h1 {
         font-size: 2.2rem;
       }
-
-      /* Even stronger crop on mobile */
-      #player-wrapper iframe {
-        height: 160%;
-        top: -25%;
-      }
     }
     
     @media (max-width: 480px) {
@@ -388,15 +393,14 @@
 <body>
 
   <!-- Disclaimer -->
-  <button class="disclaimer-button" onclick="showDisclaimer()">Must Read Disclaimer and Instructions</button>
+  <button class="disclaimer-button" onclick="showDisclaimer()">Must Read Disclaimer</button>
   <div class="disclaimer-box" id="disclaimerBox">
     <button class="close-btn" onclick="closeDisclaimer()">×</button>
     <p><strong>Disclaimer:</strong><br>
       This SonyLiv web page is completely <strong>free</strong> to use. <strong>You do not need to pay</strong> any money to anyone for access.<br><br>
       If someone has asked you for money or taken money in exchange for providing this page, <strong>you have been scammed</strong>.<br><br>
       Please report such cases here: 
-      <a href="https://instagram.com/_l__a__k__s__h__m__a__n_" target="_blank">LAKSHMAN REDDY</a><br><br>
-      For PC or Desktop users - Double Click to play in Full Screen
+      <a href="https://instagram.com/_l__a__k__s__h__m__a__n_" target="_blank">LAKSHMAN REDDY</a>
     </p>
   </div>
 
