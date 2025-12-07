@@ -1,126 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>FREE LIVE PLAYER : BY LAKSHMAN REDDY</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="referrer" content="no-referrer">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css">
-
+  <title>Live Stream Player</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta name="referrer" content="no-referrer"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.css"/>
   <style>
-    :root { --accent:#ff0033; --white:#fff; --bg:#000; --plyr-color-main:#ff0033; }
-
-    html,body{
-      margin:0;
-      height:100%;
-      background:var(--bg);
-      font-family:Inter,system-ui,sans-serif;
-      color:var(--white);
-      overflow:hidden;
+    body {
+      background-color: #000;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+    }
+    html, body {
+      height: 100%;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+    }
+    .plyr {
+      height: 100%;
     }
 
-    .wrap{
-      height:100vh;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      background:#000;
-      padding-top:35px;
-    }
-
-    .player-container{
-      width:95%;
-      height:85vh;
-      border-radius:12px;
-      overflow:hidden;
-      position:relative;
-    }
-
-    video#player{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      background:#000;
-      border-radius:12px;
-    }
-
-    .live-badge{
-      position:absolute;
-      top:12px;
-      right:14px;
-      background:var(--accent);
-      color:#fff;
-      padding:6px 14px;
-      border-radius:20px;
-      font-weight:700;
-      font-size:13px;
-      animation:glow 1.5s infinite;
-    }
-
-    @keyframes glow{
-      0%{box-shadow:0 0 10px red;}
-      50%{box-shadow:0 0 25px red;}
-      100%{box-shadow:0 0 10px red;}
-    }
-
-    .plyr__controls{
-      background:rgba(0,0,0,0.25);
-      backdrop-filter:blur(5px);
-    }
-
-    .error{
-      padding:10px;
-      text-align:center;
-      background:#111;
-      color:#ffb;
-      position:absolute;
-      left:0;right:0;bottom:0;
-      font-size:14px;
+    /* Network speed indicator */
+    .speed-display {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-family: monospace;
+      z-index: 150;
+      display: none;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="player-container">
-      <video id="player" controls autoplay playsinline muted></video>
-      <div class="live-badge">LIVE</div>
-      <div id="error" class="error" style="display:none"></div>
-    </div>
+
+  <!-- Video Player -->
+  <div style="position:relative; width:100%; height:100%;">
+    <video id="player" muted controls crossorigin playsinline></video>
+    <div id="speedDisplay" class="speed-display"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.min.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
   <script>
-  (function(){
-    const video = document.getElementById("player");
-    const errorBox = document.getElementById("error");
-
-    const src = new URLSearchParams(location.search).get("ios");
-
-    if (!src) {
-      errorBox.style.display = "block";
-      errorBox.textContent = "No stream found. Use player.html?ios=YOUR_HLS_URL";
-      video.style.display = "none";
-      return;
-    }
+    const video = document.getElementById('player');
+    const speedDisplay = document.getElementById('speedDisplay');
 
     const plyrOptions = {
-      controls: ['play-large','play','progress','current-time','mute','volume','settings','pip','airplay','fullscreen'],
-      settings: ['speed'],
-      fullscreen: { enabled:true, fallback:false, iosNative:false }
+      seekTime: 10,
+      controls: [
+        'play-large','rewind','play','fast-forward','progress','current-time',
+        'duration','mute','volume','settings','pip','fullscreen'
+      ]
     };
 
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(src);
-      hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function () {
+    document.addEventListener('DOMContentLoaded', () => {
+      // 🔹 expect ?stream=... (like CrixzyLive)
+      const source = new URLSearchParams(window.location.search).get('stream');
+      if (!source) {
+        document.body.innerHTML = '<p style="color:white;text-align:center;margin-top:20%;">No stream link provided!</p>';
+        return;
+      }
+
+      if (Hls.isSupported()) {
+        const hls = new Hls({ maxMaxBufferLength: 100 });
+        hls.loadSource(source);
+        hls.attachMedia(video);
+
+        let lastLoadedBytes = 0, lastLoadTime = performance.now();
+
+        setInterval(() => {
+          const stats = hls.stats || {};
+          const now = performance.now();
+          const duration = (now - lastLoadTime) / 1000;
+          const bytesLoaded = (stats.total || 0) - lastLoadedBytes;
+
+          if (duration > 0 && bytesLoaded > 0) {
+            speedDisplay.style.display = 'block';
+            const speedBps = (bytesLoaded * 8) / duration;
+            speedDisplay.textContent =
+              speedBps > 1e6 ? (speedBps / 1e6).toFixed(2) + ' Mbps' :
+              speedBps > 1e3 ? (speedBps / 1e3).toFixed(1) + ' Kbps' :
+              Math.round(speedBps) + ' bps';
+          }
+          lastLoadTime = now;
+          lastLoadedBytes = stats.total || 0;
+        }, 2000);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          const qualities = hls.levels.map(l => l.height).filter(Boolean);
+          const player = new Plyr(video, {
+            ...plyrOptions,
+            quality: {
+              default: qualities[0],
+              options: qualities,
+              forced: true,
+              onChange: q => {
+                hls.levels.forEach((level, i) => {
+                  if (level.height === q) hls.currentLevel = i;
+                });
+              }
+            }
+          });
+        });
+      } else {
+        video.src = source;
         new Plyr(video, plyrOptions);
-      });
-      hls.on(Hls.Events.ERROR, function (event, data) {
-        console.warn('HLS error:', data);
-      });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = src;
-      new Plyr(vid
+      }
+    });
+
+    // (Optional) anti-inspection – keep or delete as you want
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+      if (
+        ['F12'].includes(e.key) ||
+        (e.ctrlKey && e.shiftKey && ['I','J'].includes(e.key)) ||
+        (e.ctrlKey && e.key === 'U')
+      ) e.preventDefault();
+    });
+  </script>
+</body>
+</html>
