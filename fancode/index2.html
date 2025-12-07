@@ -133,6 +133,30 @@
       background: var(--accent);
       color: white;
     }
+
+    /* iframe player */
+    #player-wrapper {
+      max-width: 90%;
+      margin: 10px auto 25px auto;
+      display: none;
+    }
+    #player-wrapper .player-embed {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+      background: #000;
+    }
+    #player-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
     
     #matches {
       display: grid;
@@ -244,6 +268,10 @@
       transform: none;
       box-shadow: none;
     }
+
+    .card button.clicked {
+      transform: scale(0.97);
+    }
     
     .card button i {
       font-size: 0.9rem;
@@ -286,35 +314,6 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
-    /* Disclaimer */
-    .disclaimer-button {
-      width: 100%;
-      background-color: #ff9800;
-      color: white;
-      padding: 10px;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .disclaimer-box {
-      display: none;
-      background-color: #fff3cd;
-      color: #856404;
-      padding: 20px;
-      position: relative;
-      border-bottom: 2px solid #ff9800;
-    }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #856404;
-    }
     
     /* Responsive styles */
     @media (max-width: 768px) {
@@ -353,28 +352,47 @@
     <button class="filter-btn" data-filter="live">Live Now</button>
     <button class="filter-btn" data-filter="upcoming">Upcoming</button>
   </div>
+
+  <!-- Embedded iframe player -->
+  <div id="player-wrapper">
+    <div class="player-embed">
+      <iframe
+        id="dynamic-player"
+        allowfullscreen
+        sandbox="allow-same-origin allow-scripts allowfullscreen"
+        referrerpolicy="no-referrer">
+      </iframe>
+    </div>
+  </div>
   
   <div id="matches">
     <div class="loading"><i class="fas fa-spinner"></i> Loading matches...</div>
   </div>
   
   <div class="footer">
-    <p>© 2023 Premium Sports Live | Premium Streaming Experience</p>
+    <p>© 2025 PhoenixxxTv SonyLiv Live | Premium Streaming Experience</p>
   </div>
 
   <script>
     let allMatches = [];
+
+    const playerWrapper = document.getElementById("player-wrapper");
+    const playerIframe = document.getElementById("dynamic-player");
+
+    // OUTER PLAYER (allinonereborn.online)
+    const outerPlayerBase = "https://allinonereborn.online/events/player.html?url=";
+    // INNER PROXY (mini.allinonereborn.fun)
+    const innerProxyBase = "https://mini.allinonereborn.fun/events/stream_proxy.php?url=";
     
     async function loadMatches() {
       try {
-        const res = await fetch("https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json");
+        const res = await fetch("https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json", { cache: "no-store" });
         const data = await res.json();
         const container = document.getElementById("matches");
         container.innerHTML = "";
         
         allMatches = data.matches;
 
-        // Add animation delay to each card
         filterMatches('all');
       } catch (error) {
         document.getElementById("matches").innerHTML = `
@@ -414,23 +432,26 @@
         card.className = "card";
         card.style.animationDelay = `${index * 0.1}s`;
 
+        const safeTitle = (match.event_name || "Event").replace(/"/g, '');
+        const safeMatch = (match.match_name || "Upcoming Match").replace(/"/g, '');
+
         card.innerHTML = `
           <div class="card-img-container">
-            <img src="${match.src}" alt="${match.match_name || match.event_name}">
+            <img src="${match.src}" alt="${safeMatch}">
             <div class="card-overlay">
-              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}')"` : "disabled"}>
+              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}', event)"` : "disabled"}>
                 ${match.isLive ? '<i class="fas fa-play"></i> Watch Live' : 'Upcoming'}
               </button>
             </div>
           </div>
           <div class="card-content">
-            <h3>${match.event_name}</h3>
-            <p>${match.match_name || "Upcoming Match"}</p>
+            <h3>${safeTitle}</h3>
+            <p>${safeMatch}</p>
             <p><i class="fas fa-tv"></i> ${match.broadcast_channel}</p>
             <p><i class="fas fa-language"></i> ${match.audioLanguageName}</p>
             <div class="match-info">
               <span>${match.isLive ? '<span class="live-badge">LIVE NOW</span>' : 'Starting soon'}</span>
-              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}')"` : "disabled"}>
+              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}', event)"` : "disabled"}>
                 ${match.isLive ? '<i class="fas fa-play"></i> Watch' : 'Upcoming'}
               </button>
             </div>
@@ -440,19 +461,28 @@
       });
     }
 
-    function openPlayer(url) {
-      const proxyUrl = "https://mini.allinonereborn.fun/events/stream_proxy.php?url=" + encodeURIComponent(url);
-      window.open("player2.html?url=" + encodeURIComponent(proxyUrl), "_blank");
-      
-      // Add click animation effect
-      const button = event.currentTarget;
-      button.classList.add('clicked');
-      setTimeout(() => {
-        button.classList.remove('clicked');
-      }, 300);
+    // FULLY DYNAMIC CHAIN:
+    // iframe.src = outerPlayerBase + encodeURIComponent(innerProxyBase + encodeURIComponent(rawHlsUrl))
+    function openPlayer(url, ev) {
+      if (!url) return;
+
+      const innerUrl = innerProxyBase + encodeURIComponent(url);
+      const finalUrl = outerPlayerBase + encodeURIComponent(innerUrl);
+
+      playerIframe.src = finalUrl;
+      playerWrapper.style.display = "block";
+      playerWrapper.scrollIntoView({ behavior: "smooth" });
+
+      const button = ev && ev.currentTarget;
+      if (button) {
+        button.classList.add('clicked');
+        setTimeout(() => {
+          button.classList.remove('clicked');
+        }, 300);
+      }
     }
 
-    // Add interactive filter functionality
+    // Filters
     document.querySelectorAll('.filter-btn').forEach(button => {
       button.addEventListener('click', function() {
         document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -461,7 +491,6 @@
         const filter = this.getAttribute('data-filter');
         filterMatches(filter);
         
-        // Add a subtle animation when filtering
         const matches = document.getElementById('matches');
         matches.style.opacity = '0';
         matches.style.transform = 'translateY(20px)';
@@ -475,6 +504,52 @@
 
     window.onload = loadMatches;
   </script>
-  
+
+  <!-- Block redirects / devtools / right-click -->
+  <script>
+  // Disable right-click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Block common devtools key combos
+  document.addEventListener('keydown', function(e) {
+    const key = e.key || e.keyIdentifier || String.fromCharCode(e.keyCode);
+    if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+    if (e.ctrlKey && e.shiftKey && ['I','C','J'].includes((key+'').toUpperCase())) {
+      e.preventDefault(); e.stopPropagation(); return false;
+    }
+    if (e.ctrlKey && ['u','s'].includes((key+'').toLowerCase())) {
+      e.preventDefault(); e.stopPropagation(); return false;
+    }
+  });
+
+  // Kill window.open popups from this page
+  window.open = function() {
+    console.warn('Blocked window.open call.');
+    return null;
+  };
+
+  // Simple devtools detector
+  (function(){
+    let devtoolsOpen = false;
+    const threshold = 160;
+    setInterval(() => {
+      const widthDiff = window.outerWidth - window.innerWidth;
+      const heightDiff = window.outerHeight - window.innerHeight;
+      if (widthDiff > threshold || heightDiff > threshold) {
+        if (!devtoolsOpen) {
+          devtoolsOpen = true;
+          document.documentElement.style.filter = 'blur(6px)';
+          console.warn('DevTools detected — content blurred.');
+        }
+      } else {
+        if (devtoolsOpen) {
+          devtoolsOpen = false;
+          document.documentElement.style.filter = '';
+          console.info('DevTools closed.');
+        }
+      }
+    }, 800);
+  })();
+  </script>
 </body>
 </html>
