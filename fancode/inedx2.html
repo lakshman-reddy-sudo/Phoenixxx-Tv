@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SonyLiv Live Events</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #f43f5e;
+      --accent-hover: #e11d48;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --card-radius: 16px;
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, var(--primary) 0%, #1a2238 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23f43f5e" fill-opacity="0.1" d="M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,149.3C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+      background-size: cover;
+      z-index: -1;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+      padding-top: 20px;
+    }
+    
+    .header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #f43f5e, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      position: relative;
+    }
+    
+    .header h1::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      background: var(--accent);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 10px;
+      animation: pulse 2s infinite;
+    }
+    
+    .live-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+    
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      background: var(--secondary);
+      color: var(--text-secondary);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+    
+    .filter-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    #matches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 25px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .card {
+      background: var(--secondary);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transition: var(--transition);
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-img-container {
+      position: relative;
+      overflow: hidden;
+      height: 200px;
+    }
+    
+    .card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+    
+    .card:hover img {
+      transform: scale(1.05);
+    }
+    
+    .card-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 15px;
+      opacity: 0;
+      transition: var(--transition);
+    }
+    
+    .card:hover .card-overlay {
+      opacity: 1;
+    }
+    
+    .card-content {
+      padding: 20px;
+    }
+    
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+    
+    .card p {
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .card .match-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .card button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(244, 63, 94, 0.3);
+    }
+    
+    .card button:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .card button i {
+      font-size: 0.9rem;
+    }
+    
+    .loading {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin: 40px 0;
+    }
+    
+    .loading i {
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+    
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      #matches {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      
+      .header h1 {
+        font-size: 2.2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .filters {
+        gap: 8px;
+      }
+      
+      .filter-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>SonyLiv Live Events <span class="live-badge">LIVE</span></h1>
+  </div>
+  
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All Events</button>
+    <button class="filter-btn" data-filter="live">Live Now</button>
+    <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+  </div>
+  
+  <div id="matches">
+    <div class="loading"><i class="fas fa-spinner"></i> Loading matches...</div>
+  </div>
+  
+  <div class="footer">
+    <p>© 2023 Premium Sports Live | Premium Streaming Experience</p>
+  </div>
+
+  <script>
+    let allMatches = [];
+    
+    async function loadMatches() {
+      try {
+        const res = await fetch("https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json");
+        const data = await res.json();
+        const container = document.getElementById("matches");
+        container.innerHTML = "";
+        
+        allMatches = data.matches;
+
+        // Add animation delay to each card
+        filterMatches('all');
+      } catch (error) {
+        document.getElementById("matches").innerHTML = `
+          <div class="loading">
+            <i class="fas fa-exclamation-triangle"></i> Error loading matches. Please try again later.
+          </div>
+        `;
+        console.error("Error loading matches:", error);
+      }
+    }
+    
+    function filterMatches(filter) {
+      const container = document.getElementById("matches");
+      container.innerHTML = "";
+      
+      let filteredMatches = [];
+      
+      if (filter === 'all') {
+        filteredMatches = allMatches;
+      } else if (filter === 'live') {
+        filteredMatches = allMatches.filter(match => match.isLive);
+      } else if (filter === 'upcoming') {
+        filteredMatches = allMatches.filter(match => !match.isLive);
+      }
+      
+      if (filteredMatches.length === 0) {
+        container.innerHTML = `
+          <div class="loading">
+            <i class="fas fa-info-circle"></i> No ${filter} matches found.
+          </div>
+        `;
+        return;
+      }
+      
+      filteredMatches.forEach((match, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.style.animationDelay = `${index * 0.1}s`;
+
+        card.innerHTML = `
+          <div class="card-img-container">
+            <img src="${match.src}" alt="${match.match_name || match.event_name}">
+            <div class="card-overlay">
+              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}')"` : "disabled"}>
+                ${match.isLive ? '<i class="fas fa-play"></i> Watch Live' : 'Upcoming'}
+              </button>
+            </div>
+          </div>
+          <div class="card-content">
+            <h3>${match.event_name}</h3>
+            <p>${match.match_name || "Upcoming Match"}</p>
+            <p><i class="fas fa-tv"></i> ${match.broadcast_channel}</p>
+            <p><i class="fas fa-language"></i> ${match.audioLanguageName}</p>
+            <div class="match-info">
+              <span>${match.isLive ? '<span class="live-badge">LIVE NOW</span>' : 'Starting soon'}</span>
+              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}')"` : "disabled"}>
+                ${match.isLive ? '<i class="fas fa-play"></i> Watch' : 'Upcoming'}
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openPlayer(url) {
+      const proxyUrl = "https://mini.allinonereborn.fun/events/stream_proxy.php?url=" + encodeURIComponent(url);
+      window.open("player2.html?url=" + encodeURIComponent(proxyUrl), "_blank");
+      
+      // Add click animation effect
+      const button = event.currentTarget;
+      button.classList.add('clicked');
+      setTimeout(() => {
+        button.classList.remove('clicked');
+      }, 300);
+    }
+
+    // Add interactive filter functionality
+    document.querySelectorAll('.filter-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filter = this.getAttribute('data-filter');
+        filterMatches(filter);
+        
+        // Add a subtle animation when filtering
+        const matches = document.getElementById('matches');
+        matches.style.opacity = '0';
+        matches.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          matches.style.opacity = '1';
+          matches.style.transform = 'translateY(0)';
+        }, 300);
+      });
+    });
+
+    window.onload = loadMatches;
+  </script>
+  
+</body>
+</html>
