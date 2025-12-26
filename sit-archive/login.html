@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Student Login - SIT Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#C8102E", // Official SIT Red
+                        "primary-hover": "#A60C25",
+                        "background-light": "#ffffff",
+                        "background-dark": "#0f0f10", // Clean dark grey/black for modern dark mode
+                        "surface-dark": "#18181b", // Slightly lighter for cards/inputs
+                        "text-main": "#181112",
+                        "text-sub": "#6b7280",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px -5px rgba(200, 16, 46, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-text-main antialiased selection:bg-primary/30 selection:text-white overflow-x-hidden transition-colors duration-300">
+    <div class="flex min-h-screen w-full flex-col lg:flex-row">
+        <div class="relative hidden w-full lg:flex lg:w-1/2 lg:flex-col bg-gray-900 overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img alt="University campus building with red brick architecture"
+                    class="h-full w-full object-cover opacity-50 mix-blend-overlay scale-105"
+                    data-alt="University campus building with red brick architecture"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwI41ftEfQDOQTvdJBTyNlEDGgQkkvXAq_b9AnzFBE9-dlcdKUsGoEcdIPUZl9gWi5vO3vNbxj3EVUH7upULa1kYVu4fuqMSc0KbfrNj64eE9NHnFwZZuwXu7r78bhWcPeF5_ZPDOzu0tBu4z2b9mZYwW1-YNSsYuerOrLmqyJjh_MsOSbGRgdF6bLQtg8nURg1wSf3Z63wGCerUlV63HXvfXMSRVzCJ46IbIrcfPv_mI7Af4th61v69QobmthIZyEhUra7g4igCs" />
+                <div
+                    class="absolute inset-0 bg-gradient-to-tr from-primary/80 via-black/60 to-black/80 mix-blend-multiply">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            </div>
+            <div class="relative z-10 flex flex-1 flex-col justify-between p-16 text-white">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md border border-white/10 shadow-lg">
+                        <span class="material-symbols-outlined text-white text-3xl">school</span>
+                    </div>
+                    <div>
+                        <span class="block text-xl font-bold tracking-tight">SIT Archive</span>
+                        <span
+                            class="block text-xs font-medium text-white/70 uppercase tracking-widest">Repository</span>
+                    </div>
+                </div>
+                <div class="max-w-lg space-y-8 mb-12">
+                    <h2 class="text-5xl font-bold leading-tight drop-shadow-lg tracking-tight">
+                        Preserving <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-200">Knowledge</span>
+                        <br />
+                        Empowering Future.
+                    </h2>
+                    <p class="text-lg text-gray-300 font-light leading-relaxed max-w-md border-l-2 border-primary pl-6">
+                        Secure access to Previous Years' Question Papers. Exclusive to the SIT academic community.
+                    </p>
+                </div>
+                <div class="flex items-center justify-between text-sm text-gray-400 border-t border-white/10 pt-8">
+                    <span>© 2024 SIT Archive</span>
+                    <div class="flex gap-6">
+                        <a class="hover:text-white transition-colors duration-200" href="#">Privacy Policy</a>
+                        <a class="hover:text-white transition-colors duration-200" href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div
+            class="flex w-full flex-col items-center justify-center bg-white dark:bg-background-dark p-6 lg:w-1/2 relative">
+            <div
+                class="absolute top-0 right-0 -mr-20 -mt-20 h-[400px] w-[400px] rounded-full bg-primary/10 blur-[100px] pointer-events-none">
+            </div>
+            <div
+                class="absolute bottom-0 left-0 -ml-20 -mb-20 h-[300px] w-[300px] rounded-full bg-primary/5 blur-[80px] pointer-events-none">
+            </div>
+            <div class="w-full max-w-[420px] relative z-10">
+                <div class="mb-10 flex items-center justify-between lg:hidden">
+                    <div class="flex items-center gap-2 text-primary">
+                        <span class="material-symbols-outlined text-3xl">school</span>
+                        <span class="text-lg font-bold text-text-main dark:text-white">SIT Archive</span>
+                    </div>
+                </div>
+                <div class="mb-10">
+                    <a class="group inline-flex items-center gap-2 text-sm font-medium text-text-sub dark:text-gray-400 hover:text-primary dark:hover:text-primary transition-colors"
+                        href="index.html">
+                        <div
+                            class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 dark:bg-surface-dark group-hover:bg-primary/10 transition-colors">
+                            <span
+                                class="material-symbols-outlined text-lg transition-transform group-hover:-translate-x-0.5">arrow_back</span>
+                        </div>
+                        Back to Home
+                    </a>
+                </div>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-text-main dark:text-white">Student Login</h1>
+                    <p class="mt-2 text-base text-text-sub dark:text-gray-400">Enter your SIT credentials to access the
+                        upload dashboard.</p>
+                </div>
+                <form onsubmit="window.location.href='profile_setup.html'; return false;" class="space-y-6">
+                    <div class="space-y-1.5">
+                        <label class="block text-sm font-medium text-text-main dark:text-gray-200" for="email">
+                            Institutional Email
+                        </label>
+                        <div class="group relative">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span
+                                    class="material-symbols-outlined text-gray-400 text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-lg border-0 py-3 pl-10 pr-3 text-text-main shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-surface-dark dark:text-white dark:ring-gray-700 dark:focus:ring-primary dark:placeholder:text-gray-600 sm:text-sm sm:leading-6 transition-all"
+                                id="email" name="email" placeholder="prn@sithyd.siu.edu.in" required="" type="email" />
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-sm font-medium text-text-main dark:text-gray-200" for="password">
+                                Password
+                            </label>
+                        </div>
+                        <div class="group relative">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                <span
+                                    class="material-symbols-outlined text-gray-400 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+                            </div>
+                            <input
+                                class="block w-full rounded-lg border-0 py-3 pl-10 pr-3 text-text-main shadow-sm ring-1 ring-inset ring-gray-200 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-surface-dark dark:text-white dark:ring-gray-700 dark:focus:ring-primary dark:placeholder:text-gray-600 sm:text-sm sm:leading-6 transition-all"
+                                id="password" name="password" placeholder="••••••••" required="" type="password" />
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <a class="text-xs font-medium text-primary hover:text-primary-hover hover:underline decoration-1 underline-offset-2 transition-colors"
+                                href="forgot_password.html">Forgot password?</a>
+                        </div>
+                    </div>
+                    <button
+                        class="group flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-3.5 text-sm font-semibold leading-6 text-white shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-primary/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-300 transform active:scale-[0.98]"
+                        type="submit">
+                        <span>Secure Login</span>
+                        <span
+                            class="material-symbols-outlined text-lg transition-transform group-hover:translate-x-1">arrow_forward</span>
+                    </button>
+                </form>
+                <div class="mt-8 flex flex-col items-center gap-4 border-t border-gray-100 dark:border-white/5 pt-8">
+                    <p class="text-center text-sm text-text-sub dark:text-gray-500">
+                        Having trouble logging in?
+                        <a class="font-medium text-primary hover:text-primary-hover transition-colors" href="#">Contact
+                            IT Cell</a>
+                    </p>
+                    <div
+                        class="flex items-center gap-2 opacity-60 grayscale transition-all hover:grayscale-0 hover:opacity-100">
+                        <span class="text-xs text-gray-400 dark:text-gray-600 font-mono">SIT ARCHIVE v2.1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
