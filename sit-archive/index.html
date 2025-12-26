@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SIT Archive - Question Paper Repository</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Noto+Sans:wght@300..800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#C8102E",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#0a0a0a",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-[#181112] dark:text-gray-100 font-display antialiased">
+    <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+        <nav
+            class="sticky top-0 z-50 w-full border-b border-[#f4f0f1] dark:border-gray-800 bg-white/95 dark:bg-[#121212]/95 backdrop-blur-sm">
+            <div class="layout-container flex justify-center w-full">
+                <div class="flex w-full max-w-[1280px] items-center justify-between px-6 py-4 lg:px-10">
+                    <div class="flex items-center gap-4 text-[#181112] dark:text-white">
+                        <div class="flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-3xl">school</span>
+                        </div>
+                        <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">SIT Archive</h2>
+                    </div>
+                    <div class="hidden md:flex flex-1 justify-end gap-8 items-center">
+                        <div class="flex items-center gap-9">
+                            <a class="text-[#181112] dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
+                                href="index.html">Home</a>
+                            <a class="text-[#181112] dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
+                                href="browse.html">Browse Papers</a>
+                            <a class="text-[#181112] dark:text-gray-200 text-sm font-medium hover:text-primary transition-colors"
+                                href="about.html">About Us</a>
+                        </div>
+                        <button
+                            class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary hover:bg-red-700 transition-colors text-white text-sm font-bold leading-normal tracking-[0.015em]"
+                            onclick="window.location.href='login.html'">
+                            <span class="truncate">Student Login</span>
+                        </button>
+                    </div>
+                    <button class="md:hidden text-[#181112] dark:text-white">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div class="layout-container flex flex-col items-center w-full grow">
+            <section class="w-full flex justify-center bg-white dark:bg-[#0a0a0a] py-12 lg:py-20">
+                <div class="layout-content-container flex flex-col max-w-[1280px] w-full px-6 lg:px-10">
+                    <div class="@container">
+                        <div class="flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16">
+                            <div class="flex flex-col gap-6 lg:w-1/2 lg:shrink-0">
+                                <div class="flex flex-col gap-4 text-left">
+                                    <h1
+                                        class="text-[#181112] dark:text-white text-4xl font-black leading-[1.1] tracking-[-0.033em] md:text-5xl lg:text-6xl">
+                                        SIT Archive
+                                    </h1>
+                                    <h2
+                                        class="text-[#181112]/80 dark:text-gray-300 text-lg font-normal leading-relaxed md:text-xl">
+                                        Your Complete Previous Years’ Question Paper Repository
+                                    </h2>
+                                </div>
+                                <div class="flex flex-wrap gap-3 pt-2">
+                                    <button
+                                        class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-primary hover:bg-red-700 transition-colors text-white text-base font-bold leading-normal tracking-[0.015em]"
+                                        onclick="window.location.href='browse.html'">
+                                        <span class="mr-2 material-symbols-outlined text-xl">search</span>
+                                        <span class="truncate">Browse Papers</span>
+                                    </button>
+                                    <button
+                                        class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-[#f4f0f1] hover:bg-[#e8e4e5] dark:bg-white/10 dark:hover:bg-white/20 transition-colors text-[#181112] dark:text-white text-base font-bold leading-normal tracking-[0.015em]"
+                                        onclick="window.location.href='login.html'">
+                                        <span class="mr-2 material-symbols-outlined text-xl">upload</span>
+                                        <span class="truncate">Upload Paper</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="w-full lg:w-1/2 rounded-xl overflow-hidden shadow-xl aspect-[4/3] bg-center bg-cover relative group"
+                                data-alt="Library books stacked on wooden table"
+                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA-yhL0d-EZ_wsKOf_ItX8BYUlvw8lzC-zVabe5O7wSn9BDUopwMz2W3ttN35ZOg0dDM13GNe6wQpNI2AyN96aU9bMjt-h6jUGcz2E3mm-eG0m-f55RQsjPkih-luv9dgIdqRGrP_VVGPpMz9Z41Ie-VZVsfRtdsJ-MMFEaCWWpMGULivhqD6xKO0LtnbbDrmHm4nrgZm1fBcyv9F52L_DzRHcNCbw8kKiWcGDbWCan9v2cWs4tyDPS9Y44IH09oEUv9FNo_nx48zY");'>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                                <div class="absolute bottom-6 left-6 text-white max-w-[80%]">
+                                    <p class="font-bold text-lg">Curated by Students</p>
+                                    <p class="text-sm opacity-90">Helping juniors since 2014</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                class="w-full flex justify-center py-12 bg-background-light dark:bg-background-dark border-y border-[#e6dbdd] dark:border-gray-800">
+                <div class="layout-content-container flex flex-col max-w-[1280px] w-full px-6 lg:px-10">
+                    <div class="flex flex-wrap gap-4 lg:gap-8 justify-center">
+                        <div
+                            class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#171717] border border-[#e6dbdd] dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary mb-2">
+                                <span class="material-symbols-outlined text-3xl">description</span>
+                            </div>
+                            <p class="text-[#181112] dark:text-gray-400 text-sm font-medium leading-normal">Number of
+                                Papers</p>
+                            <p class="text-[#181112] dark:text-white tracking-tight text-3xl font-bold leading-tight">
+                                1,500+</p>
+                        </div>
+                        <div
+                            class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#171717] border border-[#e6dbdd] dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary mb-2">
+                                <span class="material-symbols-outlined text-3xl">hub</span>
+                            </div>
+                            <p class="text-[#181112] dark:text-gray-400 text-sm font-medium leading-normal">Branches</p>
+                            <p class="text-[#181112] dark:text-white tracking-tight text-3xl font-bold leading-tight">12
+                            </p>
+                        </div>
+                        <div
+                            class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#171717] border border-[#e6dbdd] dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary mb-2">
+                                <span class="material-symbols-outlined text-3xl">history</span>
+                            </div>
+                            <p class="text-[#181112] dark:text-gray-400 text-sm font-medium leading-normal">Years</p>
+                            <p class="text-[#181112] dark:text-white tracking-tight text-3xl font-bold leading-tight">
+                                10+</p>
+                        </div>
+                        <div
+                            class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#171717] border border-[#e6dbdd] dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="text-primary mb-2">
+                                <span class="material-symbols-outlined text-3xl">calendar_month</span>
+                            </div>
+                            <p class="text-[#181112] dark:text-gray-400 text-sm font-medium leading-normal">Semesters
+                            </p>
+                            <p class="text-[#181112] dark:text-white tracking-tight text-3xl font-bold leading-tight">8
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="w-full flex justify-center py-16 lg:py-24 bg-white dark:bg-[#0a0a0a]">
+                <div class="layout-content-container flex flex-col max-w-[1280px] w-full px-6 lg:px-10">
+                    <div class="flex flex-col gap-10 @container">
+                        <div class="flex flex-col gap-4 text-center items-center">
+                            <span
+                                class="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider">Simple
+                                Workflow</span>
+                            <h1
+                                class="text-[#181112] dark:text-white tracking-tight text-3xl md:text-4xl font-bold leading-tight max-w-[720px]">
+                                How SIT Archive Works
+                            </h1>
+                            <p
+                                class="text-[#181112]/70 dark:text-gray-400 text-base md:text-lg font-normal leading-normal max-w-[720px]">
+                                Three simple steps to access the resources you need or contribute to the archive to help
+                                your peers.
+                            </p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
+                            <div
+                                class="flex flex-1 flex-col gap-4 rounded-xl border border-[#e6dbdd] dark:border-gray-800 bg-background-light dark:bg-[#171717] p-8 items-start group hover:border-primary/30 transition-colors">
+                                <div
+                                    class="p-3 rounded-lg bg-white dark:bg-gray-800 text-[#181112] dark:text-white shadow-sm group-hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-3xl">search</span>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <h2 class="text-[#181112] dark:text-white text-xl font-bold leading-tight">Browse
+                                    </h2>
+                                    <p class="text-[#896168] dark:text-gray-400 text-sm font-normal leading-relaxed">
+                                        Filter by branch, year, and semester to find the specific papers you need. Our
+                                        smart search makes it effortless.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex flex-1 flex-col gap-4 rounded-xl border border-[#e6dbdd] dark:border-gray-800 bg-background-light dark:bg-[#171717] p-8 items-start group hover:border-primary/30 transition-colors">
+                                <div
+                                    class="p-3 rounded-lg bg-white dark:bg-gray-800 text-[#181112] dark:text-white shadow-sm group-hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-3xl">download</span>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <h2 class="text-[#181112] dark:text-white text-xl font-bold leading-tight">Download
+                                    </h2>
+                                    <p class="text-[#896168] dark:text-gray-400 text-sm font-normal leading-relaxed">
+                                        Get high-quality PDFs instantly without restrictions, watermarks, or wait times.
+                                        Direct to your device.
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class="flex flex-1 flex-col gap-4 rounded-xl border border-[#e6dbdd] dark:border-gray-800 bg-background-light dark:bg-[#171717] p-8 items-start group hover:border-primary/30 transition-colors">
+                                <div
+                                    class="p-3 rounded-lg bg-white dark:bg-gray-800 text-[#181112] dark:text-white shadow-sm group-hover:text-primary transition-colors">
+                                    <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <h2 class="text-[#181112] dark:text-white text-xl font-bold leading-tight">
+                                        Contribute</h2>
+                                    <p class="text-[#896168] dark:text-gray-400 text-sm font-normal leading-relaxed">
+                                        Log in with your SIT email to upload papers. Help us maintain the archive for
+                                        future batches.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <button class="flex items-center gap-2 text-primary font-bold hover:underline"
+                                onclick="window.location.href='browse.html'">
+                                Start Searching Now
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <footer
+                class="w-full flex justify-center py-10 bg-background-light dark:bg-background-dark border-t border-[#e6dbdd] dark:border-gray-800">
+                <div class="layout-content-container flex flex-col max-w-[960px] w-full px-6 text-center">
+                    <div class="flex flex-col gap-8">
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-2xl">school</span>
+                            <span class="text-lg font-bold text-[#181112] dark:text-white">SIT Archive</span>
+                        </div>
+                        <div class="flex flex-wrap items-center justify-center gap-6 md:gap-12">
+                            <a class="text-[#896168] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium"
+                                href="index.html">Contact Us</a>
+                            <a class="text-[#896168] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium"
+                                href="index.html">Privacy Policy</a>
+                            <a class="text-[#896168] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium"
+                                href="report_issue.html">Report Issue</a>
+                            <a class="text-[#896168] dark:text-gray-400 hover:text-primary transition-colors text-sm font-medium"
+                                href="about.html">Developers</a>
+                        </div>
+                        <div class="flex justify-center gap-6">
+                            <a class="text-[#896168] dark:text-gray-500 hover:text-primary transition-colors" href="#">
+                                <span class="material-symbols-outlined">mail</span>
+                            </a>
+                            <a class="text-[#896168] dark:text-gray-500 hover:text-primary transition-colors" href="#">
+                                <span class="material-symbols-outlined">public</span>
+                            </a>
+                            <a class="text-[#896168] dark:text-gray-500 hover:text-primary transition-colors" href="#">
+                                <span class="material-symbols-outlined">share</span>
+                            </a>
+                        </div>
+                        <p class="text-[#896168]/60 dark:text-gray-600 text-sm font-normal">
+                            © 2024 SIT Archive. All rights reserved. <br />Designed for Students by Students.
+                        </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>
