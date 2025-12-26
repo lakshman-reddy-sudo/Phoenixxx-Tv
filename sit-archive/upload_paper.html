@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SIT Archive - Upload Dashboard</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;family=Noto+Sans:wght@300..800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c8102e",
+                        "primary-hover": "#a60d26",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221013",
+                        "surface-dark": "#2d1b1f",
+                        "input-dark": "#180a0c",
+                        "text-main": "#181112",
+                        "text-muted": "#896168",
+                        "border-color": "#e6dbdd",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-gray-100 antialiased min-h-screen flex flex-col transition-colors duration-200">
+    <div
+        class="bg-white dark:bg-[#1a0b0d] border-b border-solid border-b-[#f4f0f1] dark:border-white/5 sticky top-0 z-50 transition-colors duration-200">
+        <div class="px-4 md:px-10 py-3 flex items-center justify-between max-w-[1440px] mx-auto w-full">
+            <div class="flex items-center gap-4 text-[#181112] dark:text-white">
+                <div class="size-8 text-primary flex items-center justify-center">
+                    <span class="material-symbols-outlined text-3xl">school</span>
+                </div>
+                <h2 class="text-[#181112] dark:text-white text-xl font-bold leading-tight tracking-[-0.015em]">SIT
+                    Archive</h2>
+            </div>
+            <div class="flex items-center gap-4 md:gap-8">
+                <nav class="hidden md:flex items-center gap-6">
+                    <a class="text-[#181112] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
+                        href="my_uploads.html">Dashboard</a>
+                    <a class="text-[#181112] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
+                        href="browse.html">Browse</a>
+                    <a class="text-[#181112] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary dark:hover:text-primary transition-colors"
+                        href="my_uploads.html">My Uploads</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button
+                        class="hidden sm:flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary-hover transition-colors shadow-sm"
+                        onclick="window.location.href='upload_paper.html'">
+                        <span class="truncate">Upload</span>
+                    </button>
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-border-color dark:border-white/10 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all"
+                        data-alt="User profile avatar with abstract pattern"
+                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC23vLalccno2x21eZYZF_tWPdgD4xbLYYWlyRdG2SXccFqOq48yqEkGbEYZwxL6GcF29XBjoDl1WFkdfZjDh9aC1pY8sHgHl7HQHoXu3DHQm7RRvIylIxktKvAPZ57gJQi14IqfkDY-75kjUZId1Nfq6FLbxaMKg0Mwh09nIMk8MVBmQeUhDE4s2mfEcqiWLbWMJY3yEDVD-mVmfVEA3RFQ6EJA7WbRhqKHUN2sftUxQc05nKOwR_pOKSqC4_7g9C8ZZvTwhnVERc");'>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex-1 w-full max-w-[1024px] mx-auto px-4 py-8 md:px-8">
+        <div class="flex flex-wrap gap-2 items-center mb-6">
+            <a class="text-text-muted dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal transition-colors"
+                href="index.html">Home</a>
+            <span class="material-symbols-outlined text-text-muted dark:text-gray-600 text-sm">chevron_right</span>
+            <a class="text-text-muted dark:text-gray-400 hover:text-primary dark:hover:text-primary text-sm font-medium leading-normal transition-colors"
+                href="my_uploads.html">Dashboard</a>
+            <span class="material-symbols-outlined text-text-muted dark:text-gray-600 text-sm">chevron_right</span>
+            <span class="text-text-main dark:text-white text-sm font-medium leading-normal">Upload Paper</span>
+        </div>
+        <div class="mb-8">
+            <h1
+                class="text-text-main dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em] mb-2">
+                Upload Question Paper</h1>
+            <p class="text-text-muted dark:text-gray-400 text-base font-normal leading-normal max-w-2xl">
+                Contribute to the SIT Archive by uploading previous years' papers. Your submission will be published
+                immediately to the public repository.
+            </p>
+        </div>
+        <form
+            class="bg-white dark:bg-surface-dark rounded-xl shadow-sm border border-border-color dark:border-white/5 overflow-hidden transition-colors duration-200"
+            onsubmit="window.location.href='my_uploads.html'; return false;">
+            <div class="p-6 md:p-8 border-b border-border-color dark:border-white/5 bg-gray-50/50 dark:bg-black/20">
+                <div
+                    class="flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-primary/20 hover:border-primary/50 transition-colors bg-white dark:bg-white/5 px-6 py-12 group cursor-pointer relative">
+                    <input accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        type="file" />
+                    <div
+                        class="size-16 rounded-full bg-primary/5 dark:bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 text-center">
+                        <p class="text-text-main dark:text-white text-lg font-bold leading-tight">Drag &amp; Drop PDF
+                            here</p>
+                        <p class="text-text-muted dark:text-gray-400 text-sm font-normal">or click to browse from your
+                            computer</p>
+                    </div>
+                    <div
+                        class="mt-2 inline-flex items-center gap-2 rounded-full bg-background-light dark:bg-black/40 px-3 py-1 text-xs font-medium text-text-muted dark:text-gray-400">
+                        <span class="material-symbols-outlined text-base">description</span>
+                        Max file size: 10MB (PDF only)
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 md:p-8">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="h-6 w-1 rounded-full bg-primary"></div>
+                    <h3 class="text-text-main dark:text-white text-lg font-bold leading-tight">Paper Details</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200"
+                            for="institute">Institute <span class="text-primary">*</span></label>
+                        <div class="relative">
+                            <select
+                                class="block w-full rounded-lg border-0 py-3 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-white/10 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                                id="institute" name="institute">
+                                <option>All Institutes</option>
+                                <option>SITH</option>
+                                <option>SITP</option>
+                                <option>SITN</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="branch">Branch
+                            <span class="text-primary">*</span></label>
+                        <div class="relative">
+                            <select
+                                class="block w-full rounded-lg border-0 py-3 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-white/10 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                                id="branch" name="branch">
+                                <option>Computer Science Engineering (CSE)</option>
+                                <option>Electronics &amp; Communication (ECE)</option>
+                                <option>Information Technology (IT)</option>
+                                <option>Mechanical Engineering (ME)</option>
+                                <option>Civil Engineering (CE)</option>
+                                <option>Artificial Intelligence &amp; Machine Learning (AIML)</option>
+                                <option>Robotics &amp; Automation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="semester">Semester
+                            <span class="text-primary">*</span></label>
+                        <select
+                            class="block w-full rounded-lg border-0 py-3 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-white/10 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                            id="semester" name="semester">
+                            <option>Semester 1</option>
+                            <option>Semester 2</option>
+                            <option>Semester 3</option>
+                            <option>Semester 4</option>
+                            <option>Semester 5</option>
+                            <option>Semester 6</option>
+                            <option>Semester 7</option>
+                            <option>Semester 8</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="subject">Subject
+                            Name <span class="text-primary">*</span></label>
+                        <input
+                            class="block w-full rounded-lg border-0 py-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                            id="subject" name="subject" placeholder="e.g. Data Structures" type="text" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="course">Course
+                            Title / Code <span class="text-primary">*</span></label>
+                        <input
+                            class="block w-full rounded-lg border-0 py-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                            id="course" name="course" placeholder="e.g. CS201" type="text" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="year">Academic
+                            Year <span class="text-primary">*</span></label>
+                        <input
+                            class="block w-full rounded-lg border-0 py-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                            id="year" name="year" placeholder="e.g. 2023-2024" type="text" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="exam-type">Exam
+                            Type <span class="text-primary">*</span></label>
+                        <select
+                            class="block w-full rounded-lg border-0 py-3 pl-3 pr-10 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-200 dark:ring-white/10 focus:ring-2 focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                            id="exam-type" name="exam-type">
+                            <option>End Semester (Regular)</option>
+                            <option>End Semester (Supplementary)</option>
+                            <option>Mid-Term 1</option>
+                            <option>Mid-Term 2</option>
+                            <option>Class Test / Quiz</option>
+                        </select>
+                    </div>
+                    <div class="col-span-1 md:col-span-2 space-y-2">
+                        <label class="block text-sm font-bold text-text-main dark:text-gray-200" for="notes">Additional
+                            Notes <span class="font-normal text-text-muted dark:text-gray-500">(Optional)</span></label>
+                        <textarea
+                            class="block w-full rounded-lg border-0 py-3 text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-200 dark:ring-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 bg-background-light dark:bg-input-dark"
+                            id="notes" name="notes"
+                            placeholder="Add any specific context about this paper (e.g., Set A, Modified curriculum, Special exam)"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="px-6 md:px-8 py-6 bg-gray-50 dark:bg-white/5 border-t border-border-color dark:border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-text-muted dark:text-gray-400 text-sm">
+                    <span class="material-symbols-outlined text-lg">public</span>
+                    <span>Paper will be publicly visible immediately after publishing.</span>
+                </div>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <button
+                        class="flex-1 sm:flex-none justify-center rounded-lg px-6 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-white/20 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
+                        type="button" onclick="window.location.href='my_uploads.html'">
+                        Save as Draft
+                    </button>
+                    <button
+                        class="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-white shadow-md hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all"
+                        type="submit">
+                        <span class="material-symbols-outlined text-lg">publish</span>
+                        Publish Paper
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
