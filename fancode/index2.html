@@ -1,553 +1,547 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SonyLiv Live Events</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #0f172a;
-      --secondary: #1e293b;
-      --accent: #f43f5e;
-      --accent-hover: #e11d48;
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
-      --card-radius: 16px;
-      --transition: all 0.3s ease;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-      background: linear-gradient(135deg, var(--primary) 0%, #1a2238 100%);
-      color: var(--text-primary);
-      min-height: 100vh;
-      padding: 20px;
-      position: relative;
-      overflow-x: hidden;
-    }
-    
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23f43f5e" fill-opacity="0.1" d="M0,128L48,117.3C96,107,192,85,288,112C384,139,480,213,576,218.7C672,224,768,160,864,138.7C960,117,1056,139,1152,149.3C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-      background-size: cover;
-      z-index: -1;
-    }
-    
-    .header {
-      text-align: center;
-      margin-bottom: 40px;
-      position: relative;
-      padding-top: 20px;
-    }
-    
-    .header h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-      background: linear-gradient(to right, #f43f5e, #f97316);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: inline-block;
-      position: relative;
-    }
-    
-    .header h1::after {
-      content: "";
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 4px;
-      background: var(--accent);
-      border-radius: 2px;
-    }
-    
-    .header p {
-      color: var(--text-secondary);
-      font-size: 1.1rem;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .live-badge {
-      display: inline-flex;
-      align-items: center;
-      background: var(--accent);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-left: 10px;
-      animation: pulse 2s infinite;
-    }
-    
-    .live-badge::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      background: white;
-      border-radius: 50%;
-      margin-right: 6px;
-    }
-    
-    .filters {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    
-    .filter-btn {
-      background: var(--secondary);
-      color: var(--text-secondary);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 500;
-    }
-    
-    .filter-btn:hover {
-      background: var(--accent);
-      color: white;
-      transform: translateY(-2px);
-    }
-    
-    .filter-btn.active {
-      background: var(--accent);
-      color: white;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PhoenixxxTv Fancode Live</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Montserrat:wght@400;600;700;800&display=swap" />
+    <style>
+        /* ------------- FANCODE PREMIUM THEME (VISUAL UPDATE ONLY) -------------- */
+        :root {
+            /* Core Colors */
+            --bg-color: #f5f7f8;
+            --text-color: #111;
+            --card-bg: #ffffff;
 
-    /* iframe player */
-    #player-wrapper {
-      max-width: 90%;
-      margin: 40px auto 25px auto; /* moved a bit down */
-      display: none;
-    }
-    #player-wrapper .player-embed {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 16px;
-      overflow: hidden;   /* crop iframe */
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
-      background: #000;
-    }
-    #player-wrapper iframe {
-      width: 100%;
-      height: 140%;       /* oversize */
-      border: none;
-      position: absolute;
-      top: -20%;          /* push up so bottom text is out of view */
-      left: 0;
-    }
-    
-    #matches {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 25px;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-    
-    .card {
-      background: var(--secondary);
-      border-radius: var(--card-radius);
-      overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      transition: var(--transition);
-      position: relative;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeIn 0.5s ease forwards;
-    }
-    
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    .card-img-container {
-      position: relative;
-      overflow: hidden;
-      height: 200px;
-    }
-    
-    .card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: var(--transition);
-    }
-    
-    .card:hover img {
-      transform: scale(1.05);
-    }
-    
-    .card-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-      display: flex;
-      align-items: flex-end;
-      padding: 15px;
-      opacity: 0;
-      transition: var(--transition);
-    }
-    
-    .card:hover .card-overlay {
-      opacity: 1;
-    }
-    
-    .card-content {
-      padding: 20px;
-    }
-    
-    .card h3 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: var(--text-primary);
-    }
-    
-    .card p {
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-    }
-    
-    .card .match-info {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .card button {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .card button:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(244, 63, 94, 0.3);
-    }
-    
-    .card button:disabled {
-      background: #475569;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
+            /* Brand Colors */
+            --brand-orange: #ff6a00;
+            --brand-red: #ff2e00;
+            --gradient-primary: linear-gradient(135deg, #ff6a00, #ff2e00);
 
-    .card button.clicked {
-      transform: scale(0.97);
-    }
-    
-    .card button i {
-      font-size: 0.9rem;
-    }
-    
-    .loading {
-      text-align: center;
-      font-size: 1.2rem;
-      color: var(--text-secondary);
-      margin: 40px 0;
-    }
-    
-    .loading i {
-      animation: spin 1s linear infinite;
-      margin-right: 10px;
-    }
-    
-    .footer {
-      text-align: center;
-      margin-top: 60px;
-      padding: 20px;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-    
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(244, 63, 94, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
-    }
-    
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 768px) {
-      #matches {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      }
-      
-      .header h1 {
-        font-size: 2.2rem;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .header h1 {
-        font-size: 1.8rem;
-      }
-      
-      .filters {
-        gap: 8px;
-      }
-      
-      .filter-btn {
-        padding: 8px 16px;
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+            /* Status Colors */
+            --status-live-bg: #d32f2f;
+            --status-upcoming-bg: #ff6a00;
+
+            /* Text Colors */
+            --title-color: #0c0c0c;
+            --subtitle-color: #666;
+
+            /* Shadows & Depth */
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.12);
+            --shadow-glow: 0 4px 15px rgba(255, 106, 0, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 10px 0 8px;
+            color: var(--title-color);
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin: 0 0 32px;
+            color: var(--subtitle-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- Tabs (Pills Style) --- */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            position: relative;
+            margin-bottom: 30px;
+            padding: 0;
+        }
+
+        .tab-btn {
+            position: relative;
+            background: #fff;
+            border: 1px solid #ddd;
+            color: #555;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-btn:hover {
+            border-color: var(--brand-orange);
+            color: var(--brand-orange);
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-1px);
+        }
+
+        /* Hide origin indicator to use pill style fully */
+        .tab-indicator {
+            display: none;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            background: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            animation: ripple 600ms linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* --- Player Wrapper (Premium Card) --- */
+        #player-wrapper {
+            max-width: 1100px;
+            margin: 0 auto 40px auto;
+            display: none;
+            /* Logic toggles this */
+            animation: fadeUp 0.5s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #player-wrapper .player-embed {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            background: #000;
+        }
+
+        #player-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* --- Matches Grid --- */
+        .file-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+            margin-top: 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* --- Match Card --- */
+        .match-item {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 0;
+            /* Padding removed for full-bleed image */
+            width: calc(25% - 24px);
+            min-width: 280px;
+            box-shadow: var(--shadow-card);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: auto;
+            /* Let content dictate */
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        .match-item:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .match-item.active {
+            border: 2px solid var(--brand-orange);
+            box-shadow: 0 0 0 4px rgba(255, 106, 0, 0.15);
+            animation: none;
+            /* Replace old glow with cleaner highlight */
+        }
+
+        /* Image */
+        .match-item img {
+            width: 100%;
+            height: 180px;
+            border-radius: 0;
+            object-fit: cover;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Content Typography */
+        .match-item h3 {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 16px 16px 8px;
+            /* Inner padding simulation */
+            color: #222;
+            line-height: 1.4;
+            height: 3em;
+            /* roughly 2 lines */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        /* Badges */
+        .badge {
+            position: absolute;
+            top: 12px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .badge-category {
+            left: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #111;
+            backdrop-filter: blur(4px);
+        }
+
+        .badge-status {
+            right: 12px;
+            background: var(--status-live-bg);
+            color: #fff;
+        }
+
+        .badge-status.upcoming {
+            background: var(--status-upcoming-bg);
+            color: #fff;
+        }
+
+        /* Stream Button */
+        .stream-button {
+            display: block;
+            width: calc(100% - 32px);
+            margin: 16px;
+            margin-top: auto;
+            padding: 12px 0;
+            background: var(--gradient-primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 106, 0, 0.25);
+        }
+
+        .stream-button:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 6px 15px rgba(255, 106, 0, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .stream-button[disabled] {
+            background: #e0e0e0;
+            color: #999;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Disclaimer / Extras */
+        footer {
+            padding: 40px 10px;
+            margin-top: 60px;
+            font-family: 'Montserrat', sans-serif;
+            background: #111;
+            color: #888;
+            font-size: 0.85rem;
+            border-top: 4px solid var(--brand-orange);
+        }
+
+        .disclaimer-button {
+            width: 100%;
+            background-color: var(--brand-upcoming-bg);
+            /* Fallback */
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px;
+            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .disclaimer-box {
+            display: none;
+            background-color: #fffde7;
+            color: #8d6e63;
+            padding: 20px;
+            position: relative;
+            border-bottom: 2px solid var(--brand-orange);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #8d6e63;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="header">
-    <h1>SonyLiv Live Events <span class="live-badge">LIVE</span></h1>
-  </div>
-  
-  <div class="filters">
-    <button class="filter-btn active" data-filter="all">All Events</button>
-    <button class="filter-btn" data-filter="live">Live Now</button>
-    <button class="filter-btn" data-filter="upcoming">Upcoming</button>
-  </div>
-
-  <!-- Embedded iframe player -->
-  <div id="player-wrapper">
-    <div class="player-embed">
-      <iframe
-        id="dynamic-player"
-        allowfullscreen
-        sandbox="allow-same-origin allow-scripts allowfullscreen"
-        referrerpolicy="no-referrer">
-      </iframe>
+    <!-- Disclaimer -->
+    <button class="disclaimer-button" onclick="showDisclaimer()">Must Read Disclaimer</button>
+    <div class="disclaimer-box" id="disclaimerBox">
+        <button class="close-btn" onclick="closeDisclaimer()">×</button>
+        <p><strong>Disclaimer:</strong><br>
+            This Fancode web page is completely <strong>free</strong> to use. <strong>You do not need to pay</strong>
+            any money to anyone for access.<br><br>
+            If someone has asked you for money or taken money in exchange for providing this page, <strong>you have been
+                scammed</strong>.<br><br>
+            Please report such cases here: <a href="https://instagram.com/_l__a__k__s__h__m__a__n_" target="_blank"
+                style="color:blue;">LAKSHMAN REDDY</a>
+        </p>
     </div>
-  </div>
-  
-  <div id="matches">
-    <div class="loading"><i class="fas fa-spinner"></i> Loading matches...</div>
-  </div>
-  
-  <div class="footer">
-    <p>© 2025 PhoenixxxTv SonyLiv Live | Premium Streaming Experience</p>
-  </div>
 
-  <script>
-    let allMatches = [];
+    <h1>PhoenixxxTv Fancode Live</h1>
+    <h2>Made with ♥️ by Lakshman</h2>
 
-    const playerWrapper = document.getElementById("player-wrapper");
-    const playerIframe = document.getElementById("dynamic-player");
+    <!-- Filter Tabs -->
+    <div class="tabs" id="tabs">
+        <button class="tab-btn active" data-filter="all">All Matches</button>
+        <button class="tab-btn" data-filter="LIVE">Live Now</button>
+        <button class="tab-btn" data-filter="UPCOMING">Upcoming</button>
+        <div class="tab-indicator" id="tabIndicator"></div>
+    </div>
 
-    // OUTER PLAYER
-    const outerPlayerBase = "https://allinonereborn.online/events/player.html?url=";
-    // INNER PROXY
-    const innerProxyBase = "https://mini.allinonereborn.fun/events/stream_proxy.php?url=";
-    
-    async function loadMatches() {
-      try {
-        const res = await fetch(
-          "https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json",
-          { cache: "no-store" }
-        );
-        const data = await res.json();
-        const container = document.getElementById("matches");
-        container.innerHTML = "";
-        
-        allMatches = data.matches || [];
+    <!-- Player -->
+    <div id="player-wrapper">
+        <div class="player-embed">
+            <iframe id="dynamic-player" allowfullscreen></iframe>
+        </div>
+    </div>
 
-        filterMatches("all");
-      } catch (error) {
-        document.getElementById("matches").innerHTML = `
-          <div class="loading">
-            <i class="fas fa-exclamation-triangle"></i> Error loading matches. Please try again later.
-          </div>
-        `;
-        console.error("Error loading matches:", error);
-      }
-    }
-    
-    function filterMatches(filter) {
-      const container = document.getElementById("matches");
-      container.innerHTML = "";
-      
-      let filteredMatches = [];
-      
-      if (filter === "all") {
-        filteredMatches = allMatches;
-      } else if (filter === "live") {
-        filteredMatches = allMatches.filter(match => match.isLive);
-      } else if (filter === "upcoming") {
-        filteredMatches = allMatches.filter(match => !match.isLive);
-      }
-      
-      if (!filteredMatches.length) {
-        container.innerHTML = `
-          <div class="loading">
-            <i class="fas fa-info-circle"></i> No ${filter} matches found.
-          </div>
-        `;
-        return;
-      }
-      
-      filteredMatches.forEach((match, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.style.animationDelay = `${index * 0.1}s`;
+    <div class="file-container" id="matches"></div>
 
-        const safeTitle = (match.event_name || "Event").replace(/"/g, "");
-        const safeMatch = (match.match_name || "Upcoming Match").replace(/"/g, "");
+    <footer>©Lakshman 2025 | All Rights Reserved</footer>
 
-        card.innerHTML = `
-          <div class="card-img-container">
-            <img src="${match.src}" alt="${safeMatch}">
-            <div class="card-overlay">
-              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}', event)"` : "disabled"}>
-                ${match.isLive ? '<i class="fas fa-play"></i> Watch Live' : "Upcoming"}
-              </button>
-            </div>
-          </div>
-          <div class="card-content">
-            <h3>${safeTitle}</h3>
-            <p>${safeMatch}</p>
-            <p><i class="fas fa-tv"></i> ${match.broadcast_channel}</p>
-            <p><i class="fas fa-language"></i> ${match.audioLanguageName}</p>
-            <div class="match-info">
-              <span>${match.isLive ? '<span class="live-badge">LIVE NOW</span>' : "Starting soon"}</span>
-              <button ${match.isLive ? `onclick="openPlayer('${match.video_url}', event)"` : "disabled"}>
-                ${match.isLive ? '<i class="fas fa-play"></i> Watch' : "Upcoming"}
-              </button>
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
 
-    // FULLY DYNAMIC CHAIN:
-    // iframe.src = outerPlayerBase + encodeURIComponent(innerProxyBase + encodeURIComponent(rawHlsUrl))
-    function openPlayer(url, ev) {
-      if (!url) return;
-
-      const innerUrl = innerProxyBase + encodeURIComponent(url);
-      const finalUrl = outerPlayerBase + encodeURIComponent(innerUrl);
-
-      playerIframe.src = finalUrl;
-      playerWrapper.style.display = "block";
-      playerWrapper.scrollIntoView({ behavior: "smooth" });
-
-      const button = ev && ev.currentTarget;
-      if (button) {
-        button.classList.add("clicked");
-        setTimeout(() => {
-          button.classList.remove("clicked");
-        }, 300);
-      }
-    }
-
-    // Filters
-    document.querySelectorAll(".filter-btn").forEach(button => {
-      button.addEventListener("click", function () {
-        document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
-        this.classList.add("active");
-        
-        const filter = this.getAttribute("data-filter");
-        filterMatches(filter);
-        
-        const matches = document.getElementById("matches");
-        matches.style.opacity = "0";
-        matches.style.transform = "translateY(20px)";
-        
-        setTimeout(() => {
-          matches.style.opacity = "1";
-          matches.style.transform = "translateY(0)";
-        }, 300);
-      });
-    });
-
-    window.onload = loadMatches;
-  </script>
-
-  <!-- Block redirects / devtools / right-click -->
-  <script>
-  document.addEventListener("contextmenu", e => e.preventDefault());
-
-  document.addEventListener("keydown", function(e) {
-    const key = e.key || e.keyIdentifier || String.fromCharCode(e.keyCode);
-    if (e.key === "F12") { e.preventDefault(); e.stopPropagation(); return false; }
-    if (e.ctrlKey && e.shiftKey && ["I","C","J"].includes((key+"").toUpperCase())) {
-      e.preventDefault(); e.stopPropagation(); return false;
-    }
-    if (e.ctrlKey && ["u","s"].includes((key+"").toLowerCase())) {
-      e.preventDefault(); e.stopPropagation(); return false;
-    }
-  });
-
-  window.open = function() {
-    console.warn("Blocked window.open call.");
-    return null;
-  };
-
-  (function(){
-    let devtoolsOpen = false;
-    const threshold = 160;
-    setInterval(() => {
-      const widthDiff = window.outerWidth - window.innerWidth;
-      const heightDiff = window.outerHeight - window.innerHeight;
-      if (widthDiff > threshold || heightDiff > threshold) {
-        if (!devtoolsOpen) {
-          devtoolsOpen = true;
-          document.documentElement.style.filter = "blur(6px)";
-          console.warn("DevTools detected — content blurred.");
+    <script>
+        // ---------- Disclaimer functions ----------
+        function showDisclaimer() {
+            document.getElementById('disclaimerBox').style.display = 'block';
         }
-      } else {
-        if (devtoolsOpen) {
-          devtoolsOpen = false;
-          document.documentElement.style.filter = "";
-          console.info("DevTools closed.");
+        function closeDisclaimer() {
+            document.getElementById('disclaimerBox').style.display = 'none';
         }
-      }
-    }, 800);
-  })();
-  </script>
+
+        const apiURL = 'https://raw.githubusercontent.com/drmlive/fancode-live-events/main/fancode.json';
+        const container = document.getElementById('matches');
+        const playerWrapper = document.getElementById('player-wrapper');
+        const playerIframe = document.getElementById('dynamic-player');
+
+        // 🔹 use internal player with ?stream=
+        const proxyBaseURL = './player.html?stream=';
+
+        let allMatches = [];
+        let activeStreamLink = null;
+        let currentFilter = 'all';
+
+        function getStreamLink(m) {
+            return m.dai_url || m.url || (m.stream && m.stream.url) || null;
+        }
+
+        function playMatch(link) {
+            if (!link) return;
+            playerIframe.src = proxyBaseURL + encodeURIComponent(link);
+            playerWrapper.style.display = 'block';
+            playerWrapper.scrollIntoView({ behavior: 'smooth' });
+            activeStreamLink = link;
+        }
+
+        async function fetchData() {
+            try {
+                const res = await fetch(apiURL, { cache: 'no-store' });
+                const data = await res.json();
+                allMatches = data.matches || [];
+                render();
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<div style="padding:24px;">Failed to fetch live matches.</div>';
+            }
+        }
+        fetchData();
+        setInterval(fetchData, 180000);
+
+        function render() {
+            container.innerHTML = '';
+            let list = allMatches;
+            if (currentFilter !== 'all') {
+                list = allMatches.filter(m => (m.status || '').toUpperCase() === currentFilter);
+            }
+
+            if (!list.length) {
+                container.innerHTML = '<div style="padding:24px;">No matches found for this filter.</div>';
+                return;
+            }
+
+            list.forEach(m => {
+                const div = document.createElement('div');
+                div.className = 'match-item';
+
+                const img = m.src || 'https://via.placeholder.com/400x225?text=No+Image';
+                const status = (m.status || '').toUpperCase();
+                const statusClass = status === 'LIVE' ? '' : 'upcoming';
+                const link = getStreamLink(m);
+                const has = !!link;
+
+                div.innerHTML = `
+      <span class="badge badge-category">${m.event_category || 'Other'}</span>
+      <span class="badge badge-status ${statusClass}">${status || 'N/A'}</span>
+      <img src="${img}" alt="${(m.title || 'Match').replace(/"/g, '')}">
+      <h3>${m.title || 'Match Title'}</h3>
+      <button class="stream-button" ${has ? '' : 'disabled'}>
+        ${has ? 'Watch Now' : 'No Stream'}
+      </button>
+    `;
+
+                if (has) {
+                    div.addEventListener('click', () => playMatch(link));
+                    const btn = div.querySelector('.stream-button');
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        playMatch(link);
+                    });
+                }
+
+                container.appendChild(div);
+            });
+        }
+
+        /* Tabs */
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentFilter = btn.dataset.filter;
+                document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+                btn.classList.add('active');
+                render();
+            });
+        });
+    </script>
+
+    <!-- Extra protection / devtools blocker from second code -->
+    <script>
+        // Disable right-click
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Block common devtools key combos
+        document.addEventListener('keydown', function (e) {
+            const key = e.key || e.keyIdentifier || String.fromCharCode(e.keyCode);
+            // F12
+            if (e.key === 'F12') { e.preventDefault(); e.stopPropagation(); return false; }
+            // Ctrl+Shift+I / Ctrl+Shift+C / Ctrl+Shift+J
+            if (e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes((key + '').toUpperCase())) {
+                e.preventDefault(); e.stopPropagation(); return false;
+            }
+            // Ctrl+U (view-source), Ctrl+S (save), Ctrl+Shift+S
+            if (e.ctrlKey && ['u', 's'].includes((key + '').toLowerCase())) {
+                e.preventDefault(); e.stopPropagation(); return false;
+            }
+        });
+
+        // Very simple devtools detector (heuristic)
+        (function () {
+            let devtoolsOpen = false;
+            const threshold = 160; // adjust if needed
+            setInterval(() => {
+                const widthDiff = window.outerWidth - window.innerWidth;
+                const heightDiff = window.outerHeight - window.innerHeight;
+                if (widthDiff > threshold || heightDiff > threshold) {
+                    if (!devtoolsOpen) {
+                        devtoolsOpen = true;
+                        // an action to discourage: hide content or show stern message
+                        document.documentElement.style.filter = 'blur(6px)';
+                        console.warn('DevTools detected — content blurred.');
+                    }
+                } else {
+                    if (devtoolsOpen) {
+                        devtoolsOpen = false;
+                        document.documentElement.style.filter = '';
+                        console.info('DevTools closed.');
+                    }
+                }
+            }, 800);
+        })();
+    </script>
+
 </body>
+
 </html>
