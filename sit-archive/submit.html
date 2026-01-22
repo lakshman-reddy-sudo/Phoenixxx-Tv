@@ -20,6 +20,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- Animation Styles -->
+    <link rel="stylesheet" href="css/animations.css">
+
     <!-- Theme Configuration -->
     <script>
         tailwind.config = {
@@ -180,9 +183,9 @@
     <main class="flex-grow">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
             <!-- Page Header -->
-            <div class="text-center mb-10">
+            <div class="text-center mb-10 animate-on-scroll">
                 <div
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4 anim-pulse">
                     <span class="material-symbols-outlined text-[18px]">volunteer_activism</span>
                     Contribute to the Archive
                 </div>
@@ -193,7 +196,7 @@
 
             <!-- Instructions Card -->
             <div
-                class="mb-8 p-6 rounded-2xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary">
+                class="mb-8 p-6 rounded-2xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary animate-on-scroll hover-lift-sm">
                 <div class="flex items-start gap-4">
                     <div
                         class="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 shrink-0">
@@ -223,7 +226,7 @@
             <form id="submit-form" class="space-y-6">
                 <!-- Institute Selection -->
                 <div
-                    class="form-card p-6 rounded-2xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary">
+                    class="form-card p-6 rounded-2xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary animate-on-scroll hover-border-glow">
                     <div class="flex items-center gap-3 mb-4">
                         <div
                             class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
@@ -244,7 +247,7 @@
 
                 <!-- Branch Selection -->
                 <div
-                    class="form-card p-6 rounded-2xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary">
+                    class="form-card p-6 rounded-2xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary animate-on-scroll hover-border-glow">
                     <div class="flex items-center gap-3 mb-4">
                         <div
                             class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary shrink-0">
@@ -523,6 +526,9 @@ Best regards`);
             if (iconMobile) iconMobile.textContent = isDark ? 'light_mode' : 'dark_mode';
         }
     </script>
+
+    <!-- Animation Controller -->
+    <script src="js/animations.js"></script>
 </body>
 
 </html>
