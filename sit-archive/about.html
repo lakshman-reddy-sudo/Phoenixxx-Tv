@@ -20,6 +20,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- Animation Styles -->
+    <link rel="stylesheet" href="css/animations.css">
+
     <!-- Theme Configuration -->
     <script>
         tailwind.config = {
@@ -175,7 +178,7 @@
                                 class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                         </span>
-                        Now with 2025 Papers
+                        Now with 2026 Papers
                     </div>
 
                     <h1
@@ -203,16 +206,16 @@
         <!-- Mission Section -->
         <section class="w-full py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="mb-12">
+                <div class="mb-12 animate-on-scroll">
                     <h2 class="text-3xl font-bold tracking-tight">Our Mission</h2>
                     <p class="mt-2 text-text-light-muted dark:text-text-dark-muted max-w-2xl">
                         Core principles that guide the development and maintenance of this archive.
                     </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-children">
                     <div
-                        class="group relative overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary p-8 transition-all hover:border-primary/30 hover:shadow-glow-sm">
+                        class="group relative overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary p-8 transition-all hover:border-primary/30 hover:shadow-glow-sm hover-lift animate-on-scroll">
                         <div
                             class="mb-6 inline-flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                             <span class="material-symbols-outlined text-[28px]">lock_open</span>
@@ -225,7 +228,7 @@
                     </div>
 
                     <div
-                        class="group relative overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary p-8 transition-all hover:border-primary/30 hover:shadow-glow-sm">
+                        class="group relative overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary p-8 transition-all hover:border-primary/30 hover:shadow-glow-sm animate-on-scroll hover-lift card-animated">
                         <div
                             class="mb-6 inline-flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                             <span class="material-symbols-outlined text-[28px]">folder_open</span>
@@ -238,7 +241,7 @@
                     </div>
 
                     <div
-                        class="group relative overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary p-8 transition-all hover:border-primary/30 hover:shadow-glow-sm">
+                        class="group relative overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary p-8 transition-all hover:border-primary/30 hover:shadow-glow-sm animate-on-scroll hover-lift card-animated">
                         <div
                             class="mb-6 inline-flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                             <span class="material-symbols-outlined text-[28px]">verified_user</span>
@@ -259,7 +262,7 @@
                 <div
                     class="relative overflow-hidden rounded-2xl border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary">
                     <div class="grid grid-cols-1 lg:grid-cols-2">
-                        <div class="p-10 lg:p-16 flex flex-col justify-center">
+                        <div class="p-10 lg:p-16 flex flex-col justify-center animate-on-scroll-left">
                             <h2 class="text-3xl font-bold tracking-tight mb-6">Why SIT Archive Exists</h2>
                             <div class="space-y-8">
                                 <div class="flex gap-4">
@@ -465,6 +468,9 @@
             if (iconMobile) iconMobile.textContent = isDark ? 'light_mode' : 'dark_mode';
         }
     </script>
+
+    <!-- Animation Controller -->
+    <script src="js/animations.js"></script>
 </body>
 
 </html>
