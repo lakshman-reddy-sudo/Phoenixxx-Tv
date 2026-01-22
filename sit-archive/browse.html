@@ -481,7 +481,28 @@
             // Render content
             if (level === 'subjects') {
                 // Render files (papers)
-                grid.innerHTML = currentData.map(paper => `
+                const folderPath = currentPath.join(' → ');
+                grid.innerHTML = currentData.map(paper => {
+                    const reportSubject = encodeURIComponent(`SIT Archive - Report Issue: ${paper.name} (${paper.code})`);
+                    const reportBody = encodeURIComponent(`Hi SIT Archive Team,
+
+I would like to report an issue with the following paper:
+
+📍 Location: ${folderPath}
+📄 Paper: ${paper.name}
+📝 Code: ${paper.code}
+📌 Type: ${paper.type}
+
+🔴 Issue Description:
+[Please describe the issue here - e.g., wrong paper, blurry scan, missing pages, incorrect subject, etc.]
+
+📎 Attachments:
+[If you have a corrected version or supporting document, please attach it to this email]
+
+Thank you!`);
+                    const reportLink = `mailto:archive.sit@protonmail.com?subject=${reportSubject}&body=${reportBody}`;
+
+                    return `
                     <div class="folder-card flex flex-col p-4 rounded-xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary hover:border-primary/50 hover:shadow-glow-sm cursor-pointer group">
                         <div class="flex items-start gap-3 mb-3">
                             <span class="material-symbols-outlined text-primary text-2xl shrink-0">description</span>
@@ -490,17 +511,23 @@
                                 <p class="text-xs text-text-light-muted dark:text-text-dark-muted">${paper.code}</p>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between mt-auto">
+                        <div class="flex items-center justify-between mt-auto gap-2">
                             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${paper.type === 'Mid-Sem' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'bg-primary/10 text-primary'}">
                                 ${paper.type}
                             </span>
-                            <a href="${paper.file}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors">
-                                <span class="material-symbols-outlined text-[16px]">download</span>
-                                Download
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="${reportLink}" class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-medium transition-colors" title="Report an issue with this paper">
+                                    <span class="material-symbols-outlined text-[14px]">flag</span>
+                                    Report
+                                </a>
+                                <a href="${paper.file}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">download</span>
+                                    Download
+                                </a>
+                            </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } else {
                 // Render folders
                 const items = Object.entries(currentData);
