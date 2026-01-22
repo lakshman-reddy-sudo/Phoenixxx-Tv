@@ -19,6 +19,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- Animation Styles -->
+    <link rel="stylesheet" href="css/animations.css">
+
     <!-- Theme Configuration -->
     <script>
         tailwind.config = {
@@ -175,9 +178,9 @@
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 relative z-10">
             <!-- Page Heading -->
-            <div class="text-center mb-16 space-y-4">
+            <div class="text-center mb-16 space-y-4 animate-on-scroll">
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-sm">
-                    Frequently Asked <span class="text-primary">Questions</span>
+                    Frequently Asked <span class="text-primary anim-gradient-text">Questions</span>
                 </h1>
                 <p
                     class="text-lg text-text-light-muted dark:text-text-dark-muted max-w-2xl mx-auto font-light leading-relaxed">
@@ -187,10 +190,10 @@
             </div>
 
             <!-- FAQ Accordion -->
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4 stagger-children">
                 <!-- Item 1 -->
                 <details
-                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300"
+                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300 animate-on-scroll hover-lift-sm"
                     open>
                     <summary
                         class="flex cursor-pointer items-center justify-between px-6 py-5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
@@ -212,7 +215,7 @@
 
                 <!-- Item 2 -->
                 <details
-                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300">
+                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300 animate-on-scroll hover-lift-sm">
                     <summary
                         class="flex cursor-pointer items-center justify-between px-6 py-5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                         <h3 class="text-base sm:text-lg font-medium group-hover:text-primary transition-colors">
@@ -234,7 +237,7 @@
 
                 <!-- Item 3 -->
                 <details
-                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300">
+                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300 animate-on-scroll hover-lift-sm">
                     <summary
                         class="flex cursor-pointer items-center justify-between px-6 py-5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                         <h3 class="text-base sm:text-lg font-medium group-hover:text-primary transition-colors">
@@ -255,7 +258,7 @@
 
                 <!-- Item 4 -->
                 <details
-                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300">
+                    class="group rounded-xl bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark open:border-primary/50 transition-all duration-300 animate-on-scroll hover-lift-sm">
                     <summary
                         class="flex cursor-pointer items-center justify-between px-6 py-5 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
                         <h3 class="text-base sm:text-lg font-medium group-hover:text-primary transition-colors">
@@ -405,6 +408,9 @@
             if (iconMobile) iconMobile.textContent = isDark ? 'light_mode' : 'dark_mode';
         }
     </script>
+
+    <!-- Animation Controller -->
+    <script src="js/animations.js"></script>
 </body>
 
 </html>
