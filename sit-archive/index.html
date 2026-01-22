@@ -20,6 +20,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- Animation Styles -->
+    <link rel="stylesheet" href="css/animations.css">
+
     <!-- Theme Configuration -->
     <script>
         tailwind.config = {
@@ -98,6 +101,163 @@
         /* Smooth transitions for theme */
         * {
             transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Hero Folder Animation Keyframes */
+        @keyframes floatCard {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-6deg);
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(-6deg);
+            }
+        }
+
+        @keyframes floatCard2 {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-3deg);
+            }
+
+            50% {
+                transform: translateY(-6px) rotate(-3deg);
+            }
+        }
+
+        @keyframes floatCardMain {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounceRight {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(3px);
+            }
+        }
+
+        @keyframes typing {
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            50% {
+                border-color: transparent;
+            }
+
+            51%,
+            100% {
+                border-color: #C8102E;
+            }
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(200, 16, 46, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 5px rgba(200, 16, 46, 0.2);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-float-1 {
+            animation: floatCard 4s ease-in-out infinite;
+        }
+
+        .animate-float-2 {
+            animation: floatCard2 4s ease-in-out infinite 0.5s;
+        }
+
+        .animate-float-main {
+            animation: floatCardMain 4s ease-in-out infinite 1s, pulseGlow 3s ease-in-out infinite;
+        }
+
+        .animate-slide-in {
+            animation: slideInRight 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .animate-slide-in-1 {
+            animation-delay: 0.8s;
+        }
+
+        .animate-slide-in-2 {
+            animation-delay: 1.2s;
+        }
+
+        .animate-slide-in-3 {
+            animation-delay: 1.6s;
+        }
+
+        .animate-slide-in-4 {
+            animation-delay: 2s;
+        }
+
+        .animate-chevron {
+            animation: bounceRight 1.5s ease-in-out infinite;
+        }
+
+        .animate-typing {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 1s steps(20) 2.2s forwards, fadeInUp 0.5s ease-out 2s forwards;
+            width: 0;
+            opacity: 0;
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.8s ease-out forwards;
         }
     </style>
 </head>
@@ -182,9 +342,9 @@
             <div class="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
                 <div class="flex flex-col lg:flex-row lg:items-center gap-12 lg:gap-16">
                     <!-- Hero Content -->
-                    <div class="flex-1 text-center lg:text-left">
+                    <div class="flex-1 text-center lg:text-left hero-animate">
                         <div
-                            class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary mb-6">
+                            class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary mb-6 anim-fade-in-up">
                             <span class="relative flex h-2 w-2">
                                 <span
                                     class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -193,7 +353,8 @@
                             Updated with 2025 Papers
                         </div>
 
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6">
+                        <h1
+                            class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] mb-6 anim-fade-in-up delay-200">
                             <span
                                 class="bg-gradient-to-r from-text-light to-text-light/70 dark:from-text-dark dark:to-text-dark/60 bg-clip-text text-transparent">Your
                                 Complete</span>
@@ -205,19 +366,19 @@
                         </h1>
 
                         <p
-                            class="text-lg text-text-light-muted dark:text-text-dark-muted max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+                            class="text-lg text-text-light-muted dark:text-text-dark-muted max-w-xl mx-auto lg:mx-0 mb-8 leading-relaxed anim-fade-in-up delay-400">
                             Access previous years' question papers organized by institute, branch, year, and semester.
                             Easy navigation, instant downloads.
                         </p>
 
                         <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <a href="browse.html"
-                                class="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary text-white font-bold text-sm tracking-wide shadow-glow hover:bg-primary-hover transition-all">
+                                class="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg bg-primary text-white font-bold text-sm tracking-wide shadow-glow hover:bg-primary-hover transition-all btn-animated btn-ripple hover-glow">
                                 <span class="material-symbols-outlined text-[20px]">folder_open</span>
                                 Browse Papers
                             </a>
                             <a href="about.html"
-                                class="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary hover:bg-bg-light-tertiary dark:hover:bg-bg-dark-tertiary font-bold text-sm tracking-wide transition-all">
+                                class="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-lg border border-border-light dark:border-border-dark bg-bg-light-secondary dark:bg-bg-dark-secondary hover:bg-bg-light-tertiary dark:hover:bg-bg-dark-tertiary font-bold text-sm tracking-wide transition-all btn-ripple hover-lift-sm">
                                 <span class="material-symbols-outlined text-[20px]">info</span>
                                 Learn More
                             </a>
@@ -230,36 +391,40 @@
                             <!-- Decorative folder stack -->
                             <div class="relative">
                                 <div
-                                    class="absolute -top-4 -left-4 w-64 h-48 bg-bg-light-secondary dark:bg-bg-dark-secondary rounded-2xl border border-border-light dark:border-border-dark transform -rotate-6 shadow-lg">
+                                    class="absolute -top-4 -left-4 w-64 h-48 bg-bg-light-secondary dark:bg-bg-dark-secondary rounded-2xl border border-border-light dark:border-border-dark shadow-lg animate-float-1">
                                 </div>
                                 <div
-                                    class="absolute -top-2 -left-2 w-64 h-48 bg-bg-light dark:bg-bg-dark-secondary rounded-2xl border border-border-light dark:border-border-dark transform -rotate-3 shadow-lg">
+                                    class="absolute -top-2 -left-2 w-64 h-48 bg-bg-light dark:bg-bg-dark-secondary rounded-2xl border border-border-light dark:border-border-dark shadow-lg animate-float-2">
                                 </div>
                                 <div
-                                    class="relative w-72 h-56 bg-gradient-to-br from-bg-light to-bg-light-secondary dark:from-bg-dark-secondary dark:to-bg-dark-tertiary rounded-2xl border border-border-light dark:border-border-dark shadow-xl p-6 flex flex-col">
-                                    <div class="flex items-center gap-3 mb-4">
+                                    class="relative w-72 h-56 bg-gradient-to-br from-bg-light to-bg-light-secondary dark:from-bg-dark-secondary dark:to-bg-dark-tertiary rounded-2xl border border-border-light dark:border-border-dark shadow-xl p-6 flex flex-col animate-float-main">
+                                    <div class="flex items-center gap-3 mb-4 animate-fade-in">
                                         <span class="material-symbols-outlined text-primary text-3xl">folder</span>
                                         <span class="font-bold text-lg">Browse Papers</span>
                                     </div>
                                     <div class="space-y-2 text-sm">
                                         <div
-                                            class="flex items-center gap-2 text-text-light-muted dark:text-text-dark-muted">
-                                            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                                            class="flex items-center gap-2 text-text-light-muted dark:text-text-dark-muted animate-slide-in animate-slide-in-1">
+                                            <span
+                                                class="material-symbols-outlined text-[16px] animate-chevron">chevron_right</span>
                                             <span>SITH</span>
                                         </div>
                                         <div
-                                            class="flex items-center gap-2 pl-4 text-text-light-muted dark:text-text-dark-muted">
-                                            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                                            class="flex items-center gap-2 pl-4 text-text-light-muted dark:text-text-dark-muted animate-slide-in animate-slide-in-2">
+                                            <span
+                                                class="material-symbols-outlined text-[16px] animate-chevron">chevron_right</span>
                                             <span>Computer Science</span>
                                         </div>
                                         <div
-                                            class="flex items-center gap-2 pl-8 text-text-light-muted dark:text-text-dark-muted">
-                                            <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-                                            <span>2023-24</span>
+                                            class="flex items-center gap-2 pl-8 text-text-light-muted dark:text-text-dark-muted animate-slide-in animate-slide-in-3">
+                                            <span
+                                                class="material-symbols-outlined text-[16px] animate-chevron">chevron_right</span>
+                                            <span>2024-25</span>
                                         </div>
-                                        <div class="flex items-center gap-2 pl-12 text-primary font-medium">
+                                        <div
+                                            class="flex items-center gap-2 pl-12 text-primary font-medium animate-slide-in animate-slide-in-4">
                                             <span class="material-symbols-outlined text-[16px]">description</span>
-                                            <span>Data Structures.pdf</span>
+                                            <span class="animate-typing">Data Structures.pdf</span>
                                         </div>
                                     </div>
                                 </div>
@@ -274,38 +439,38 @@
         <section
             class="w-full py-12 bg-bg-light-secondary dark:bg-bg-dark-secondary border-y border-border-light dark:border-border-dark">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 stagger-children">
                     <div
-                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark">
+                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark animate-on-scroll hover-lift card-animated">
                         <div class="text-primary mb-2">
                             <span class="material-symbols-outlined text-3xl">description</span>
                         </div>
-                        <p class="text-3xl font-bold mb-1">1,500+</p>
+                        <p id="stat-papers" class="text-3xl font-bold mb-1 counter" data-target="0">0</p>
                         <p class="text-sm text-text-light-muted dark:text-text-dark-muted">Papers</p>
                     </div>
                     <div
-                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark">
+                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark animate-on-scroll hover-lift card-animated">
                         <div class="text-primary mb-2">
                             <span class="material-symbols-outlined text-3xl">account_tree</span>
                         </div>
-                        <p class="text-3xl font-bold mb-1">12</p>
+                        <p id="stat-branches" class="text-3xl font-bold mb-1 counter" data-target="0">0</p>
                         <p class="text-sm text-text-light-muted dark:text-text-dark-muted">Branches</p>
                     </div>
                     <div
-                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark">
+                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark animate-on-scroll hover-lift card-animated">
                         <div class="text-primary mb-2">
                             <span class="material-symbols-outlined text-3xl">history</span>
                         </div>
-                        <p class="text-3xl font-bold mb-1">10+</p>
+                        <p id="stat-years" class="text-3xl font-bold mb-1 counter" data-target="0">0</p>
                         <p class="text-sm text-text-light-muted dark:text-text-dark-muted">Years</p>
                     </div>
                     <div
-                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark">
+                        class="text-center p-6 rounded-xl bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark animate-on-scroll hover-lift card-animated">
                         <div class="text-primary mb-2">
                             <span class="material-symbols-outlined text-3xl">school</span>
                         </div>
-                        <p class="text-3xl font-bold mb-1">1</p>
-                        <p class="text-sm text-text-light-muted dark:text-text-dark-muted">Institute</p>
+                        <p id="stat-institutes" class="text-3xl font-bold mb-1 counter" data-target="0">0</p>
+                        <p class="text-sm text-text-light-muted dark:text-text-dark-muted">Institutes</p>
                     </div>
                 </div>
             </div>
@@ -314,7 +479,7 @@
         <!-- How It Works Section -->
         <section class="w-full py-20 lg:py-28">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-16">
+                <div class="text-center mb-16 animate-on-scroll">
                     <span
                         class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-4">
                         Simple Workflow
@@ -332,7 +497,7 @@
                     </div>
 
                     <!-- Step 1 -->
-                    <div class="relative z-10 flex flex-col items-center text-center group">
+                    <div class="relative z-10 flex flex-col items-center text-center group animate-on-scroll">
                         <div
                             class="flex size-20 items-center justify-center rounded-full bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark shadow-lg group-hover:border-primary/50 group-hover:shadow-glow-sm transition-all duration-300 mb-6">
                             <span
@@ -348,7 +513,7 @@
                     </div>
 
                     <!-- Step 2 -->
-                    <div class="relative z-10 flex flex-col items-center text-center group">
+                    <div class="relative z-10 flex flex-col items-center text-center group animate-on-scroll">
                         <div
                             class="flex size-20 items-center justify-center rounded-full bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark shadow-lg group-hover:border-primary/50 group-hover:shadow-glow-sm transition-all duration-300 mb-6">
                             <span
@@ -364,7 +529,7 @@
                     </div>
 
                     <!-- Step 3 -->
-                    <div class="relative z-10 flex flex-col items-center text-center group">
+                    <div class="relative z-10 flex flex-col items-center text-center group animate-on-scroll">
                         <div
                             class="flex size-20 items-center justify-center rounded-full bg-bg-light-secondary dark:bg-bg-dark-secondary border border-border-light dark:border-border-dark shadow-lg group-hover:border-primary/50 group-hover:shadow-glow-sm transition-all duration-300 mb-6">
                             <span
@@ -380,8 +545,9 @@
                     </div>
                 </div>
 
-                <div class="flex justify-center mt-12">
-                    <a href="browse.html" class="inline-flex items-center gap-2 text-primary font-bold hover:underline">
+                <div class="flex justify-center mt-12 animate-on-scroll">
+                    <a href="browse.html"
+                        class="inline-flex items-center gap-2 text-primary font-bold hover:underline btn-arrow">
                         Start Browsing Now
                         <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </a>
@@ -460,6 +626,12 @@
             if (iconMobile) iconMobile.textContent = isDark ? 'light_mode' : 'dark_mode';
         }
     </script>
+
+    <!-- Data Store (for dynamic stats) -->
+    <script src="js/data.js"></script>
+
+    <!-- Animation Controller -->
+    <script src="js/animations.js"></script>
 </body>
 
 </html>
