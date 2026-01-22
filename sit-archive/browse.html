@@ -127,6 +127,8 @@
                         href="index.html">Home</a>
                     <a class="text-sm font-semibold text-primary" href="browse.html">Browse Papers</a>
                     <a class="text-sm font-medium text-text-light-muted dark:text-text-dark-muted hover:text-text-light dark:hover:text-text-dark transition-colors"
+                        href="submit.html">Submit Papers</a>
+                    <a class="text-sm font-medium text-text-light-muted dark:text-text-dark-muted hover:text-text-light dark:hover:text-text-dark transition-colors"
                         href="about.html">About Us</a>
                     <a class="text-sm font-medium text-text-light-muted dark:text-text-dark-muted hover:text-text-light dark:hover:text-text-dark transition-colors"
                         href="faq.html">FAQ</a>
@@ -155,6 +157,8 @@
                 <a class="block text-sm font-medium text-text-light-muted dark:text-text-dark-muted py-2"
                     href="index.html">Home</a>
                 <a class="block text-sm font-semibold text-primary py-2" href="browse.html">Browse Papers</a>
+                <a class="block text-sm font-medium text-text-light-muted dark:text-text-dark-muted py-2"
+                    href="submit.html">Submit Papers</a>
                 <a class="block text-sm font-medium text-text-light-muted dark:text-text-dark-muted py-2"
                     href="about.html">About Us</a>
                 <a class="block text-sm font-medium text-text-light-muted dark:text-text-dark-muted py-2"
@@ -228,6 +232,7 @@
 
     <script>
         // Sample data structure - in production, this would come from a database/API
+        // Structure: institutes -> branches -> years -> sems -> subjects
         const data = {
             institutes: {
                 "SITHYD": {
@@ -240,61 +245,15 @@
                             years: {
                                 "2024-25": {
                                     name: "2024-25",
-                                    semesters: {
+                                    sems: {
                                         "Sem 1": {
                                             name: "Semester 1",
+                                            icon: "looks_one",
                                             subjects: [
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "Mid-Sem" },
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "End-Sem" },
-                                                { name: "Programming for Problem Solving", code: "CS101", file: "#", type: "Mid-Sem" },
-                                                { name: "Programming for Problem Solving", code: "CS101", file: "#", type: "End-Sem" },
-                                                { name: "Engineering Physics", code: "PH101", file: "#", type: "End-Sem" },
-                                            ]
-                                        },
-                                        "Sem 2": {
-                                            name: "Semester 2",
-                                            subjects: [
-                                                { name: "Engineering Mathematics II", code: "MA102", file: "#", type: "Mid-Sem" },
-                                                { name: "Engineering Mathematics II", code: "MA102", file: "#", type: "End-Sem" },
-                                                { name: "Data Structures", code: "CS201", file: "#", type: "Mid-Sem" },
-                                                { name: "Data Structures", code: "CS201", file: "#", type: "End-Sem" },
-                                                { name: "Digital Logic Design", code: "CS202", file: "#", type: "End-Sem" },
-                                            ]
-                                        }
-                                    }
-                                },
-                                "2023-24": {
-                                    name: "2023-24",
-                                    semesters: {
-                                        "Sem 1": {
-                                            name: "Semester 1",
-                                            subjects: [
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "End-Sem" },
-                                                { name: "Programming for Problem Solving", code: "CS101", file: "#", type: "End-Sem" },
-                                            ]
-                                        },
-                                        "Sem 2": {
-                                            name: "Semester 2",
-                                            subjects: [
-                                                { name: "Data Structures", code: "CS201", file: "#", type: "End-Sem" },
-                                                { name: "Object Oriented Programming", code: "CS203", file: "#", type: "Mid-Sem" },
-                                            ]
-                                        }
-                                    }
-                                },
-                                "2022-23": {
-                                    name: "2022-23",
-                                    semesters: {
-                                        "Sem 1": {
-                                            name: "Semester 1",
-                                            subjects: [
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "End-Sem" },
-                                            ]
-                                        },
-                                        "Sem 2": {
-                                            name: "Semester 2",
-                                            subjects: [
-                                                { name: "Data Structures", code: "CS201", file: "#", type: "End-Sem" },
+                                                { name: "Calculus", code: "0707210101", file: "#", type: "End-Sem" },
+                                                { name: "Fundamentals of Quantum Physics", code: "0707210102", file: "#", type: "End-Sem" },
+                                                { name: "Digital Electronics and Logic Design", code: "0707210103", file: "#", type: "End-Sem" },
+                                                { name: "Programming Paradigm and Problem Solving", code: "0707210104", file: "#", type: "End-Sem" }
                                             ]
                                         }
                                     }
@@ -307,62 +266,11 @@
                             years: {
                                 "2024-25": {
                                     name: "2024-25",
-                                    semesters: {
+                                    sems: {
                                         "Sem 1": {
                                             name: "Semester 1",
-                                            subjects: [
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "Mid-Sem" },
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "End-Sem" },
-                                                { name: "Introduction to AI", code: "AI101", file: "#", type: "Mid-Sem" },
-                                                { name: "Introduction to AI", code: "AI101", file: "#", type: "End-Sem" },
-                                                { name: "Python Programming", code: "CS105", file: "#", type: "End-Sem" },
-                                            ]
-                                        },
-                                        "Sem 2": {
-                                            name: "Semester 2",
-                                            subjects: [
-                                                { name: "Engineering Mathematics II", code: "MA102", file: "#", type: "End-Sem" },
-                                                { name: "Machine Learning Fundamentals", code: "AI201", file: "#", type: "Mid-Sem" },
-                                                { name: "Machine Learning Fundamentals", code: "AI201", file: "#", type: "End-Sem" },
-                                                { name: "Data Structures", code: "CS201", file: "#", type: "End-Sem" },
-                                            ]
-                                        }
-                                    }
-                                },
-                                "2023-24": {
-                                    name: "2023-24",
-                                    semesters: {
-                                        "Sem 1": {
-                                            name: "Semester 1",
-                                            subjects: [
-                                                { name: "Introduction to AI", code: "AI101", file: "#", type: "End-Sem" },
-                                                { name: "Python Programming", code: "CS105", file: "#", type: "End-Sem" },
-                                            ]
-                                        },
-                                        "Sem 2": {
-                                            name: "Semester 2",
-                                            subjects: [
-                                                { name: "Machine Learning Fundamentals", code: "AI201", file: "#", type: "End-Sem" },
-                                            ]
-                                        }
-                                    }
-                                },
-                                "2022-23": {
-                                    name: "2022-23",
-                                    semesters: {
-                                        "Sem 1": {
-                                            name: "Semester 1",
-                                            subjects: [
-                                                { name: "Introduction to AI", code: "AI101", file: "#", type: "End-Sem" },
-                                                { name: "Engineering Mathematics I", code: "MA101", file: "#", type: "End-Sem" },
-                                            ]
-                                        },
-                                        "Sem 2": {
-                                            name: "Semester 2",
-                                            subjects: [
-                                                { name: "Python Programming", code: "CS105", file: "#", type: "End-Sem" },
-                                                { name: "Data Structures", code: "CS201", file: "#", type: "End-Sem" },
-                                            ]
+                                            icon: "looks_one",
+                                            subjects: []
                                         }
                                     }
                                 }
@@ -429,6 +337,7 @@
         }
 
         // Get current folder data based on path
+        // Structure: institutes -> branches -> years -> sems -> subjects
         function getCurrentData() {
             let current = data.institutes;
             let level = 'institutes';
@@ -442,9 +351,9 @@
                     current = current[key].years;
                     level = 'years';
                 } else if (level === 'years') {
-                    current = current[key].semesters;
-                    level = 'semesters';
-                } else if (level === 'semesters') {
+                    current = current[key].sems;
+                    level = 'sems';
+                } else if (level === 'sems') {
                     current = current[key].subjects;
                     level = 'subjects';
                 }
@@ -473,7 +382,7 @@
                     folderCount.textContent = `${currentData.length} papers available`;
                 } else {
                     const count = Object.keys(currentData).length;
-                    const itemType = level === 'branches' ? 'branches' : level === 'years' ? 'years' : level === 'semesters' ? 'semesters' : 'items';
+                    const itemType = level === 'branches' ? 'branches' : level === 'years' ? 'years' : level === 'sems' ? 'semesters' : 'items';
                     folderCount.textContent = `${count} ${itemType} available`;
                 }
             }
@@ -503,8 +412,11 @@ Thank you!`);
                     const reportLink = `mailto:archive.sit@protonmail.com?subject=${reportSubject}&body=${reportBody}`;
 
                     return `
-                    <div class="folder-card flex flex-col p-4 rounded-xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary hover:border-primary/50 hover:shadow-glow-sm cursor-pointer group">
-                        <div class="flex items-start gap-3 mb-3">
+                    <div class="folder-card relative flex flex-col p-4 rounded-xl border border-border-light dark:border-border-dark bg-bg-light dark:bg-bg-dark-secondary hover:border-primary/50 hover:shadow-glow-sm cursor-pointer group">
+                        <a href="${reportLink}" class="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-text-light-muted dark:text-text-dark-muted hover:text-red-500 dark:hover:text-red-400 transition-colors" title="Report an issue">
+                            <span class="material-symbols-outlined text-[18px]">flag</span>
+                        </a>
+                        <div class="flex items-start gap-3 mb-3 pr-8">
                             <span class="material-symbols-outlined text-primary text-2xl shrink-0">description</span>
                             <div class="min-w-0 flex-1">
                                 <h3 class="font-semibold text-sm group-hover:text-primary transition-colors truncate">${paper.name}</h3>
@@ -515,16 +427,10 @@ Thank you!`);
                             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${paper.type === 'Mid-Sem' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'bg-primary/10 text-primary'}">
                                 ${paper.type}
                             </span>
-                            <div class="flex items-center gap-2">
-                                <a href="${reportLink}" class="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 text-xs font-medium transition-colors" title="Report an issue with this paper">
-                                    <span class="material-symbols-outlined text-[14px]">flag</span>
-                                    Report
-                                </a>
-                                <a href="${paper.file}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors">
-                                    <span class="material-symbols-outlined text-[16px]">download</span>
-                                    Download
-                                </a>
-                            </div>
+                            <a href="${paper.file}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-xs font-bold transition-colors">
+                                <span class="material-symbols-outlined text-[16px]">download</span>
+                                Download
+                            </a>
                         </div>
                     </div>
                 `}).join('');
@@ -555,11 +461,11 @@ Thank you!`);
                         const yearCount = Object.keys(value.years || {}).length;
                         subCount = `${yearCount} years`;
                     } else if (level === 'years') {
-                        const semCount = Object.keys(value.semesters || {}).length;
+                        const semCount = Object.keys(value.sems || {}).length;
                         subCount = `${semCount} semesters`;
-                    } else if (level === 'semesters') {
-                        const paperCount = (value.subjects || []).length;
-                        subCount = `${paperCount} papers`;
+                    } else if (level === 'sems') {
+                        const subjectCount = (value.subjects || []).length;
+                        subCount = `${subjectCount} papers`;
                     }
 
                     return `
